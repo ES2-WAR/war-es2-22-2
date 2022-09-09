@@ -17,3 +17,4 @@ def test_regions():
   
   assert testMap.filterTerritoriesByRegion('b') == [3, 4]
   assert testMap.filterTerritoriesByRegion('a') == [0, 1, 2, 5]
+  assert testMap.filterTerritoriesByRegion('c') == []
