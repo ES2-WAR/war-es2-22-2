@@ -16,5 +16,5 @@ class GameMap():
   def getHostileTerritoryNeighbours(self, index: int) -> list[int]:
     return list(filter(lambda x: self.territories[x].color != self.territories[index].color, self.territories[index].neighbours))
 
-  def filterTerritoriesByRegion(self, regionName: str) -> list[int]:
-    return list(map(lambda y: y.id, filter(lambda x: x.region == regionName, self.territories)))
+  def filterTerritoriesByRegion(self, regionId: int) -> list[int]:
+    return list(map(lambda y: y.id, filter(lambda x: x.regionId == regionId, self.territories)))
