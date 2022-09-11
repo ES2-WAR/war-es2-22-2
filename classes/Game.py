@@ -1,42 +1,44 @@
 import pygame
 from pygame.locals import *
+from GraphicalMap import *
+from Window import *
  
 class Game:
   def __init__(self):
-    self._running = True
-    self._display_surf = None
-    self.size = self.weight, self.height = 800, 600
+    self.running = True
+    self.window = None
 
-  def on_init(self):
+  def onInit(self):
     pygame.init()
-    self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
-    
-    self.map: pygame.Surface = pygame.image.load("./assets/testMap.png")
-    self.scaledMap = pygame.transform.smoothscale(self.map, (self.map.get_width() * (self.weight / self.map.get_width()), self.map.get_height() * (self.height / self.map.get_height())))
-    self._running = True
+    self.window = Window(800, 600)
+    self.graphicalMap = GraphicalMap("./assets/testMap.png", self.window.width, self.window.height)
+    self.running = True
 
-  def on_event(self, event):
+  def onEvent(self, event):
     if event.type == pygame.QUIT:
-      self._running = False
-  def on_loop(self):
+      self.running = False
+
+  def onLoop(self):
     pass
-  def on_render(self):
-    self._display_surf.blit(self.scaledMap, self.scaledMap.get_rect())
+
+  def onRender(self):
+    self.window.display.blit(self.graphicalMap.image, self.graphicalMap.image.get_rect())
     pygame.display.flip()
-  def on_cleanup(self):
+
+  def onCleanup(self):
     pygame.quit()
 
-  def on_execute(self):
-    if self.on_init() == False:
-      self._running = False
+  def onExecute(self):
+    if self.onInit() == False:
+      self.running = False
 
-    while(self._running):
+    while(self.running):
       for event in pygame.event.get():
-        self.on_event(event)
-      self.on_loop()
-      self.on_render()
-    self.on_cleanup()
+        self.onEvent(event)
+      self.onLoop()
+      self.onRender()
+    self.onCleanup()
  
 if __name__ == "__main__" :
   theGame = Game()
-  theGame.on_execute()
+  theGame.onExecute()
