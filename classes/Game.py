@@ -11,7 +11,7 @@ class Game:
   def onInit(self):
     pygame.init()
     self.window = Window(800, 600)
-    self.graphicalMap = GraphicalMap("./assets/testMap.png", self.window.width, self.window.height)
+    self.graphicalMap = GraphicalMap("./assets/tabuleiro.png", self.window.width, self.window.height)
     self.running = True
 
   def onEvent(self, event):
@@ -22,7 +22,7 @@ class Game:
     pass
 
   def onRender(self):
-    self.window.display.blit(self.graphicalMap.image, self.graphicalMap.image.get_rect())
+    self.window.showMap(self.graphicalMap.image)
     pygame.display.flip()
 
   def onCleanup(self):
