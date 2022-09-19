@@ -1,3 +1,4 @@
+from codecs import unicode_escape_decode
 from classes.Territory import *
 from classes.Region import *
 from functools import *
@@ -18,3 +19,19 @@ class GameMap():
 
   def filterTerritoriesByRegion(self, regionId: int) -> list[int]:
     return list(map(lambda y: y.id, filter(lambda x: x.regionId == regionId, self.territories)))
+  
+  def __canMoveTroopsBetweenTerriroriesAux(self, fromRegionId: int, toRegionId: int, visitedTerritoriesId:list[int]) -> bool:
+    if fromRegionId == toRegionId:
+      return True
+    if fromRegionId in visitedTerritoriesId:
+      return False
+    visitedTerritoriesId.append(fromRegionId)
+    return any(map(lambda t: self.__canMoveTroopsBetweenTerriroriesAux(t, toRegionId, visitedTerritoriesId), self.getFriendlyTerritoryNeighbours(fromRegionId)))
+  
+  def moveTroopsBetweenTerrirories(self, fromRegionId: int, toRegionId: int, numberOfTroops: int):
+    if not self.__canMoveTroopsBetweenTerriroriesAux(fromRegionId, toRegionId, []):
+      return 
+    troopsLost = self.territories[fromRegionId].loseTroops(numberOfTroops)
+    self.territories[toRegionId].gainTroops(troopsLost)
+    
+  
