@@ -1,3 +1,4 @@
+from typing import Tuple
 import pygame
 from pygame.locals import *
 from GraphicalMap import *
@@ -15,8 +16,15 @@ class Game:
     self.running = True
 
   def onEvent(self, event):
+    mousePosition: Tuple[int, int] = pygame.mouse.get_pos()
     if event.type == pygame.QUIT:
       self.running = False
+    if event.type == pygame.MOUSEBUTTONDOWN: #botão é apertado
+      print("mouse down")
+      print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
+    if event.type == pygame.MOUSEBUTTONUP: #botão é solto
+      print("mouse up")
+      print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
 
   def onLoop(self):
     pass
