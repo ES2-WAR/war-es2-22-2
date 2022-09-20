@@ -21,15 +21,24 @@ def test_regions():
   assert testMap.filterTerritoriesByRegion(3) == []
 
 def test_troopsMovement():
-  testMap.moveTroopsBetweenTerrirories(0, 1, 5)
+  assert testMap.moveTroopsBetweenTerrirories(0, 1, 5) == [0, 1]
   assert testTerritories[0].numberOfTroops == 5
   assert testTerritories[1].numberOfTroops == 15
-  testMap.moveTroopsBetweenTerrirories(0, 1, 5)
-  assert testTerritories[0].numberOfTroops == 1
-  assert testTerritories[1].numberOfTroops == 19
-  testMap.moveTroopsBetweenTerrirories(2, 1, 2)
-  assert testTerritories[0].numberOfTroops == 1
+  assert testMap.moveTroopsBetweenTerrirories(0, 1, 5) == [0, 1]
+  assert testTerritories[0].numberOfTroops == 0
+  assert testTerritories[1].numberOfTroops == 20
+  assert testMap.moveTroopsBetweenTerrirories(2, 1, 2) == []
+  assert testTerritories[0].numberOfTroops == 0
   assert testTerritories[2].numberOfTroops == 10
-  testMap.moveTroopsBetweenTerrirories(2, 5, 2)
+  assert testMap.moveTroopsBetweenTerrirories(2, 5, 2) == [2, 3, 5]
   assert testTerritories[2].numberOfTroops == 8
   assert testTerritories[5].numberOfTroops == 12
+  
+def test_troopsManipulation():
+  testTerritories[6].gainTroops(2)
+  testTerritories[6].loseTroops(15)
+  testTerritories[6].gainTroops(2)
+  testTerritories[6].deallocateTroops(3)
+  assert testTerritories[6].getDefendingTroops() == 1
+  
+  
