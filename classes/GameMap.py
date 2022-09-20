@@ -8,7 +8,7 @@ class GameMap():
   def __init__(self, territoryList: list[Territory], regionList: list[Region]):
     self.territories = territoryList
     self.regions = regionList
-    self.lastTerritoryAttacked = Tuple[-1, -1]
+    self.lastTerritoryAttackedAndAttacker = (-1, -1)
   
   def getTerritoryNeighbours(self, index: int) -> list[int]:
     return self.territories[index].neighbours
@@ -43,6 +43,12 @@ class GameMap():
     self.territories[toTerritoryId].gainTroops(troopsLost)
     return possiblePathToDestiny[1]
   
+  def moveDifferentNumberOfTroopsToColonyAfterAttack(self, colonyTerritoryId: int, newNumberOfTroopsInColony: int):
+    if self.lastTerritoryAttackedAndAttacker[0] != colonyTerritoryId:
+      return
+    numberOfTroopsOverDesired = self.territories[colonyTerritoryId].numberOfTroops - newNumberOfTroopsInColony
+    self.moveTroopsBetweenFriendlyTerrirories(colonyTerritoryId, self.lastTerritoryAttackedAndAttacker[1], numberOfTroopsOverDesired)
+  
   def rollDices(self, numberOfDices: int) -> list[int]:
     MAX_OF_DICES_PER_ATTACK = 3
     finalNumberOfDices = min(numberOfDices, MAX_OF_DICES_PER_ATTACK)
@@ -50,11 +56,14 @@ class GameMap():
   
   def colonize(self, colonizerTerritoryId: int, colonyTerritoryId: int):
     self.territories[colonyTerritoryId].colonize(self.territories[colonizerTerritoryId].color)
+    self.lastTerritoryAttackedAndAttacker = (colonyTerritoryId, colonizerTerritoryId)
     self.moveTroopsBetweenFriendlyTerrirories(colonizerTerritoryId, colonyTerritoryId, self.territories[colonizerTerritoryId].getNonDefendingTroops())
     
   def getSuccessfullAttacks(self, numberOfAttackerTroops: int, numberOfDefenderTroops: int) -> Tuple[int, int]:
-    attackersDiceResult = self.rollDices(numberOfAttackerTroops).sort(reverse=True)
-    defendersDiceResult = self.rollDices(numberOfDefenderTroops).sort(reverse=True)
+    attackersDiceResult = self.rollDices(numberOfAttackerTroops)
+    defendersDiceResult = self.rollDices(numberOfDefenderTroops)
+    defendersDiceResult.sort(reverse=True)
+    attackersDiceResult.sort(reverse=True)
     battlesWonByAttackers = 0
     battlesWonByDefenders = 0
     for i in range(len(attackersDiceResult) if len(attackersDiceResult) < len(defendersDiceResult) else len(defendersDiceResult)):
@@ -66,14 +75,14 @@ class GameMap():
   
   def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
     if defenderTerritoryId not in self.getHostileTerritoryNeighbours(attackerTerritoryId):
-      return
+      return 0, 0
     numberOfTroopsAttacking = self.territories[attackerTerritoryId].getNonDefendingTroops()
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(numberOfTroopsAttacking, numberOfDefendingTroops)
     troopsLostByAttacker = self.territories[attackerTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[1])
     troopsLostByDefender = self.territories[defenderTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[0])
-    if (self.territories[defenderTerritoryId].hasAliveTroops):
-      return
+    if self.territories[defenderTerritoryId].hasAliveTroops():
+      return troopsLostByAttacker, troopsLostByDefender
     self.colonize(attackerTerritoryId, defenderTerritoryId)
     return troopsLostByAttacker, troopsLostByDefender
     

@@ -1,3 +1,4 @@
+import re
 from classes.GameMap import *
 from classes.Territory import *
 from classes.Region import *
@@ -46,10 +47,22 @@ def test_diceRolls():
   assert len(testMap.rollDices(5)) == 3
   assert len(testMap.rollDices(2)) == 2
   
+def test_colony():
+  testMap.colonize(3, 4)
+  assert testMap.getFriendlyTerritoryNeighbours(3) == [2, 4, 5]
+  
 def test_attacking():
   attackerTroopsBeforeAttack = testTerritories[2].numberOfTroops
   defenderTroopsBeforeAttack = testTerritories[0].numberOfTroops
   troopsLostByAttackerAndDefender = testMap.attackEnemyTerritory(2, 0)
-  assert attackerTroopsBeforeAttack - troopsLostByAttackerAndDefender[0] - 1 == testTerritories[2].numberOfTroops 
-  assert defenderTroopsBeforeAttack - troopsLostByAttackerAndDefender[1] - 1 == testTerritories[0].numberOfTroops 
+  assert testMap.getFriendlyTerritoryNeighbours(2) == [0, 3]
+  if defenderTroopsBeforeAttack - troopsLostByAttackerAndDefender[1] > 0:
+    return
+  assert 1 == testTerritories[2].numberOfTroops 
+  assert attackerTroopsBeforeAttack - troopsLostByAttackerAndDefender[0] - 1 == testTerritories[0].numberOfTroops 
+  testMap.moveDifferentNumberOfTroopsToColonyAfterAttack(0, 3)
+  attackerTroopsAfterAttack = testTerritories[2].numberOfTroops
+  defenderTroopsAfterAttack = testTerritories[0].numberOfTroops
+  assert attackerTroopsAfterAttack + defenderTroopsAfterAttack - 3 == testTerritories[2].numberOfTroops
+  assert 3 == testTerritories[0].numberOfTroops
   
