@@ -70,13 +70,13 @@ class GameMap():
       if attackersDiceResult[i] > defendersDiceResult[i]:
         battlesWonByAttackers += 1
       else:
-        battlesWonByDefenders
+        battlesWonByDefenders += 1
     return battlesWonByAttackers, battlesWonByDefenders
   
-  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
+  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int, numberOfAttackerTroops: int = 3) -> Tuple[int, int]:
     if defenderTerritoryId not in self.getHostileTerritoryNeighbours(attackerTerritoryId):
       return 0, 0
-    numberOfTroopsAttacking = self.territories[attackerTerritoryId].getNonDefendingTroops()
+    numberOfTroopsAttacking = min(numberOfAttackerTroops, self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(numberOfTroopsAttacking, numberOfDefendingTroops)
     troopsLostByAttacker = self.territories[attackerTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[1])
@@ -86,4 +86,10 @@ class GameMap():
     self.colonize(attackerTerritoryId, defenderTerritoryId)
     return troopsLostByAttacker, troopsLostByDefender
     
-  
+  def attackEnemyTerritoryUntilVictory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
+    totalTroopsLostByAttackerAndDefender = (0, 0)
+    while self.territories[defenderTerritoryId].hasAliveTroops() and self.territories[attackerTerritoryId].getNonDefendingTroops() > self.territories[defenderTerritoryId].getDefendingTroops():
+      troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId)
+      totalTroopsLostByAttackerAndDefender[0] += troopsLostByAttackerAndDefender[0]
+      totalTroopsLostByAttackerAndDefender[1] += troopsLostByAttackerAndDefender[1]
+    return totalTroopsLostByAttackerAndDefender
