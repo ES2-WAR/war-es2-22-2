@@ -54,14 +54,17 @@ class GameMap():
     finalNumberOfDices = min(numberOfDices, MAX_OF_DICES_PER_ATTACK)
     return list(randint(1, 6) for i in range(finalNumberOfDices))
   
+  def rollDicesForAttackerAndDefender(self, numberOfAttackerTroops: int, numberOfDefenderTroops: int) -> Tuple[list[int], list[int]]:
+    attackersDiceResult = self.rollDices(numberOfAttackerTroops)
+    defendersDiceResult = self.rollDices(numberOfDefenderTroops)
+    return attackersDiceResult, defendersDiceResult
+  
   def colonize(self, colonizerTerritoryId: int, colonyTerritoryId: int):
     self.territories[colonyTerritoryId].colonize(self.territories[colonizerTerritoryId].color)
     self.lastTerritoryAttackedAndAttacker = (colonyTerritoryId, colonizerTerritoryId)
     self.moveTroopsBetweenFriendlyTerrirories(colonizerTerritoryId, colonyTerritoryId, self.territories[colonizerTerritoryId].getNonDefendingTroops())
     
-  def getSuccessfullAttacks(self, numberOfAttackerTroops: int, numberOfDefenderTroops: int) -> Tuple[int, int]:
-    attackersDiceResult = self.rollDices(numberOfAttackerTroops)
-    defendersDiceResult = self.rollDices(numberOfDefenderTroops)
+  def getSuccessfullAttacks(self, attackersDiceResult: list[int], defendersDiceResult: list[int]) -> Tuple[int, int]:
     defendersDiceResult.sort(reverse=True)
     attackersDiceResult.sort(reverse=True)
     battlesWonByAttackers = 0
@@ -78,7 +81,8 @@ class GameMap():
       return 0, 0
     numberOfTroopsAttacking = min(numberOfAttackerTroops, self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
-    battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(numberOfTroopsAttacking, numberOfDefendingTroops)
+    diceResultOfAttackersAndDefenders = self.rollDicesForAttackerAndDefender(numberOfTroopsAttacking, numberOfDefendingTroops)
+    battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(diceResultOfAttackersAndDefenders[0], diceResultOfAttackersAndDefenders[1])
     troopsLostByAttacker = self.territories[attackerTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[1])
     troopsLostByDefender = self.territories[defenderTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[0])
     if self.territories[defenderTerritoryId].hasAliveTroops():
@@ -86,7 +90,7 @@ class GameMap():
     self.colonize(attackerTerritoryId, defenderTerritoryId)
     return troopsLostByAttacker, troopsLostByDefender
     
-  def attackEnemyTerritoryUntilVictory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
+  def attackEnemyTerritoryBlitz(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
     totalTroopsLostByAttackerAndDefender = (0, 0)
     while self.territories[defenderTerritoryId].hasAliveTroops() and self.territories[attackerTerritoryId].getNonDefendingTroops() > self.territories[defenderTerritoryId].getDefendingTroops():
       troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId)
