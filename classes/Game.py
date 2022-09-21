@@ -25,7 +25,8 @@ class Game:
     if event.type == pygame.MOUSEBUTTONUP: #botão é solto
       print("mouse up")
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
-
+    
+    # a ideia é fazer a lógica de clique dps que o overlay dos territórios estiver pronto
   def onLoop(self):
     pass
 
