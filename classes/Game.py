@@ -3,17 +3,49 @@ import pygame
 from pygame.locals import *
 from GraphicalMap import *
 from Window import *
+from Piece import *
+from Territory import *
+from Region import *
+from GameMap import *
+
+pygame.init()
+FONT_SIZE = 15
  
+
+CORES = { 'branco': (255,255,255),
+          'vermelho': (255,0,0),
+          'verde': (0,255,0),
+          'azul': (0,0,255),
+          'preto': (0,0,0)}
+
+
 class Game:
   def __init__(self):
     self.running = True
     self.window = None
 
+    # criacao dos dados teste de territorio e regioes
+    self.testTerritories: list[Territory] = [Territory('branco', [1, 2], 0, 'Brasil', 0, 395, 523), Territory('azul', [0, 4], 0, 'Argentina', 1, 305, 617), Territory('preto', [0, 3], 0, 'Inglaterra', 2, 499, 252), Territory('vermelho', [2, 4], 1, 'China', 3, 950, 353), Territory('verde', [3, 1], 1, 'Moscou', 4, 706, 231)]
+    self.testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
+    self.testMap = GameMap(self.testTerritories, self.testRegions)
+
+    # criacao da fonte para o texto da quantidade de tropas
+    self.font = pygame.font.SysFont("Arial", FONT_SIZE)
+
+    # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
+    self.pieces_group = pygame.sprite.Group()
+    for territory in self.testTerritories:
+      color = CORES[territory.color]
+      new_piece = Piece(color, territory.pos_x, territory.pos_y, territory.numberOfTroops, territory.id)
+      self.pieces_group.add(new_piece)
+
+
   def onInit(self):
     pygame.init()
-    self.window = Window(800, 600)
-    self.graphicalMap = GraphicalMap("./assets/tabuleiro.png", self.window.width, self.window.height)
+    self.window = Window(1200, 800)
+    self.graphicalMap = GraphicalMap("classes/assets/tabuleiro.png", self.window.width, self.window.height)
     self.running = True
+    
 
   def onEvent(self, event):
     mousePosition: Tuple[int, int] = pygame.mouse.get_pos()
@@ -32,6 +64,10 @@ class Game:
 
   def onRender(self):
     self.window.showMap(self.graphicalMap.image)
+    for piece in self.pieces_group:
+      text = self.font.render(str(piece.troops), True, (150,150,150))
+      self.graphicalMap.image.blit(piece.frame, piece.rect)
+      self.graphicalMap.image.blit(text, (piece.rect[0] + FONT_SIZE/2, piece.rect[1] + FONT_SIZE/2))
     pygame.display.flip()
 
   def onCleanup(self):
