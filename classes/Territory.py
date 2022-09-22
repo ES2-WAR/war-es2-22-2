@@ -1,13 +1,15 @@
 from functools import *
 
 class Territory():
-  def __init__(self, color: str, neighbours: list[int], regionId: int, territoryName: str, territoryId: int):
+  def __init__(self, color: str, neighbours: list[int], regionId: int, territoryName: str, territoryId: int, pos_x: int, pos_y: int):
     self.id = territoryId
     self.color = color
     self.neighbours = neighbours
-    self.numberOfTroops = 10
+    self.numberOfTroops = 15
     self.regionId = regionId
     self.name = territoryName
+    self.pos_x = pos_x
+    self.pos_y = pos_y
     
   def getNonDefendingTroops(self) -> int:
     return self.numberOfTroops - 1

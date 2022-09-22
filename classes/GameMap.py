@@ -1,7 +1,7 @@
 from random import randint
 from typing import Tuple
-from classes.Territory import *
-from classes.Region import *
+from Territory import *
+from Region import *
 from functools import *
 
 class GameMap():
