@@ -16,7 +16,8 @@ CORES = { 'branco': (255,255,255),
           'vermelho': (255,0,0),
           'verde': (0,255,0),
           'azul': (0,0,255),
-          'preto': (0,0,0)}
+          'preto': (0,0,0),
+          'hover': (125, 50, 125)}
 
 
 class Game:
@@ -25,9 +26,9 @@ class Game:
     self.window = None
 
     # criacao dos dados teste de territorio e regioes
-    self.testTerritories: list[Territory] = [Territory('branco', [1, 2], 0, 'Brasil', 0, 395, 523), Territory('azul', [0, 4], 0, 'Argentina', 1, 305, 617), Territory('preto', [0, 3], 0, 'Inglaterra', 2, 499, 252), Territory('vermelho', [2, 4], 1, 'China', 3, 950, 353), Territory('verde', [3, 1], 1, 'Moscou', 4, 706, 231)]
+    self.testTerritories: list[Territory] = [Territory('branco', [1, 2], 0, 'Brasil', 0, 395, 523), Territory('branco', [0, 4], 0, 'Argentina', 1, 305, 617), Territory('preto', [0, 3], 0, 'Inglaterra', 2, 499, 252), Territory('vermelho', [2, 4], 1, 'China', 3, 950, 353), Territory('verde', [3, 1], 1, 'Moscou', 4, 706, 231)]
     self.testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
-    self.testMap = GameMap(self.testTerritories, self.testRegions)
+    self.gameMap = GameMap(self.testTerritories, self.testRegions)
 
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("Arial", FONT_SIZE)
@@ -49,13 +50,21 @@ class Game:
 
   def onEvent(self, event):
     mousePosition: Tuple[int, int] = pygame.mouse.get_pos()
+    pieces: list[Piece] = self.pieces_group.sprites()
     if event.type == pygame.QUIT:
       self.running = False
     if event.type == pygame.MOUSEBUTTONDOWN: #botão é apertado
-      print("mouse down")
-      print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
-    if event.type == pygame.MOUSEBUTTONUP: #botão é solto
-      print("mouse up")
+      for piece in pieces:
+        if piece.rect.collidepoint(mousePosition[0], mousePosition[1]):
+          if self.gameMap.selectedTerritories[0] == -1:
+            self.gameMap.selectedTerritories[0] = piece.territoryId
+          else:
+            self.gameMap.selectedTerritories[1] = piece.territoryId
+            if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color == self.gameMap.territories[self.gameMap.selectedTerritories[1]].color:
+              path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
+              if path == []: self.gameMap.selectedTerritories[1] = -1
+              else: self.gameMap.selectedTerritories = [-1, -1]
+
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
     
     # a ideia é fazer a lógica de clique dps que o overlay dos territórios estiver pronto
@@ -65,6 +74,7 @@ class Game:
   def onRender(self):
     self.window.showMap(self.graphicalMap.image)
     for piece in self.pieces_group:
+      piece.updatePiece(self.testTerritories[piece.territoryId])
       text = self.font.render(str(piece.troops), True, (150,150,150))
       self.graphicalMap.image.blit(piece.frame, piece.rect)
       self.graphicalMap.image.blit(text, (piece.rect[0] + FONT_SIZE/2, piece.rect[1] + FONT_SIZE/2))
