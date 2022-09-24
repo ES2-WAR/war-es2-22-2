@@ -91,9 +91,12 @@ class GameMap():
     return troopsLostByAttacker, troopsLostByDefender
     
   def attackEnemyTerritoryBlitz(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
-    totalTroopsLostByAttackerAndDefender = (0, 0)
-    while self.territories[defenderTerritoryId].hasAliveTroops() and self.territories[attackerTerritoryId].getNonDefendingTroops() > self.territories[defenderTerritoryId].getDefendingTroops():
-      troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId)
+    totalTroopsLostByAttackerAndDefender = [0, 0]
+    if defenderTerritoryId not in self.getHostileTerritoryNeighbours(attackerTerritoryId):
+      return totalTroopsLostByAttackerAndDefender
+    while self.territories[attackerTerritoryId].canAttack() and self.territories[attackerTerritoryId].color != self.territories[defenderTerritoryId].color:
+      print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
+      troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId, self.territories[attackerTerritoryId].getNonDefendingTroops())
       totalTroopsLostByAttackerAndDefender[0] += troopsLostByAttackerAndDefender[0]
       totalTroopsLostByAttackerAndDefender[1] += troopsLostByAttackerAndDefender[1]
     return totalTroopsLostByAttackerAndDefender
