@@ -63,7 +63,10 @@ class GameMap():
     self.territories[colonyTerritoryId].colonize(self.territories[colonizerTerritoryId].color)
     self.selectedTerritories = (colonyTerritoryId, colonizerTerritoryId)
     self.moveTroopsBetweenFriendlyTerrirories(colonizerTerritoryId, colonyTerritoryId, self.territories[colonizerTerritoryId].getNonDefendingTroops())
-    
+  
+  def isHostileNeighbour(self, territory1: int, territory2: int):
+    return territory2 in self.getHostileTerritoryNeighbours(territory1)
+
   def getSuccessfullAttacks(self, attackersDiceResult: list[int], defendersDiceResult: list[int]) -> Tuple[int, int]:
     defendersDiceResult.sort(reverse=True)
     attackersDiceResult.sort(reverse=True)
@@ -77,8 +80,7 @@ class GameMap():
     return battlesWonByAttackers, battlesWonByDefenders
   
   def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int, numberOfAttackerTroops: int = 3) -> Tuple[int, int]:
-    if defenderTerritoryId not in self.getHostileTerritoryNeighbours(attackerTerritoryId):
-      return 0, 0
+    if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return 0, 0
     numberOfTroopsAttacking = min(numberOfAttackerTroops, self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     diceResultOfAttackersAndDefenders = self.rollDicesForAttackerAndDefender(numberOfTroopsAttacking, numberOfDefendingTroops)
@@ -92,8 +94,7 @@ class GameMap():
     
   def attackEnemyTerritoryBlitz(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
     totalTroopsLostByAttackerAndDefender = [0, 0]
-    if defenderTerritoryId not in self.getHostileTerritoryNeighbours(attackerTerritoryId):
-      return totalTroopsLostByAttackerAndDefender
+    if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return totalTroopsLostByAttackerAndDefender
     while self.territories[attackerTerritoryId].canAttack() and self.territories[attackerTerritoryId].color != self.territories[defenderTerritoryId].color:
       print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
       troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId, self.territories[attackerTerritoryId].getNonDefendingTroops())
