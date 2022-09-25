@@ -61,6 +61,7 @@ class Game:
               losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
               if not (losses[0] == losses[1] == 0): self.gameMap.selectedTerritories = [-1, -1]
           else: self.gameMap.selectedTerritories = [-1, -1]
+          break
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
       if not isPieceClick: self.gameMap.selectedTerritories = [-1, -1]
     # a ideia é fazer a lógica de clique dps que o overlay dos territórios estiver pronto
