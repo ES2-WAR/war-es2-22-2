@@ -33,6 +33,9 @@ class Piece(pygame.sprite.Sprite):
     self.troops = relatedTerritory.numberOfTroops
 
     if self.selected:
-      pygame.draw.circle(self.frame, COLORS['amarelo'], (self.radius, self.radius), self.radius, 0) 
+      if relatedTerritory.color == 'preto':
+        pygame.draw.circle(self.frame, COLORS['branco'], (self.radius, self.radius), self.radius, 0)
+      else:
+        pygame.draw.circle(self.frame, COLORS['preto'], (self.radius, self.radius), self.radius, 0) 
     else: 
       pygame.draw.circle(self.frame, COLORS[relatedTerritory.color], (self.radius, self.radius), self.radius, 0)
