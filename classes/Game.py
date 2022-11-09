@@ -57,16 +57,12 @@ class Game:
             for selected_piece in self.selected_pieces_group:
               if selected_piece.territoryId == self.gameMap.selectedTerritories[0]:
                 selected_piece.selected = True
-                print(selected_piece.territoryId)
-                print(selected_piece.territoryId, self.gameMap.selectedTerritories)
                 break
           elif piece.territoryId != self.gameMap.selectedTerritories[0]: 
             self.gameMap.selectedTerritories[1] = piece.territoryId
             for selected_piece in self.selected_pieces_group:
               if selected_piece.territoryId == self.gameMap.selectedTerritories[1]:
                 selected_piece.selected = True
-                print(selected_piece.territoryId)
-                print(selected_piece.territoryId, self.gameMap.selectedTerritories)
                 break
             if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color == self.gameMap.territories[self.gameMap.selectedTerritories[1]].color:
               path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
@@ -96,9 +92,7 @@ class Game:
                   if selected_piece.territoryId == self.gameMap.selectedTerritories[1]:
                     selected_piece.selected = False
                     break
-                print(selected_piece.territoryId, self.gameMap.selectedTerritories)
                 self.gameMap.selectedTerritories[1] = -1
-                print(selected_piece.territoryId, self.gameMap.selectedTerritories)
                                   
           else: 
             for selected_piece in self.selected_pieces_group:
