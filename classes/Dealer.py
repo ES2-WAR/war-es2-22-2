@@ -55,7 +55,7 @@ class Dealer():
   def receiveArmyFromTradingCards(self, handOfCards: list[Card], doAllPossibleTrades: bool = False) -> int:
       bonusArmy = 0
       while self.hasCardsToTrade(handOfCards):
-        tradeThreeCardsPerTroop()
+        self.tradeThreeCardsPerTroop(handOfCards)
         if self.numberOfTrades < len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE):
             bonusArmy += self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[self.numberOfTrades]
         else:
@@ -85,6 +85,64 @@ class Dealer():
           differentShapesInList += 1
       return differentShapesInList >= 3
   
+  # previne remover cartas sem conseguir efetuar trocas
+  # embora so entre nessa funcao se tiver ja verificado se consegue trocar
+  def tradeThreeCardsPerTroop(self, handOfCards: list[Card]):
+      listOfCardsShapes = list(map(lambda c : c.shape, handOfCards))
+      cardsRemoved = 0
+      if listOfCardsShapes.count('T') + listOfCardsShapes.count('J') >= 3:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'T')
+          if cardsRemoved >= 3:
+              return
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          return
+          
+      if listOfCardsShapes.count('S') + listOfCardsShapes.count('J') >= 3:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'S')
+          if cardsRemoved >= 3:
+              return
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          return
+          
+      if listOfCardsShapes.count('C') + listOfCardsShapes.count('J') >= 3:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'C')
+          if cardsRemoved >= 3:
+              return
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          return
+          
+      differentShapesInList = 0
+      if 'T' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'S' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'C' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'J' in listOfCardsShapes:
+          differentShapesInList += 1
+      if differentShapesInList < 3:
+          return
+      
+      if 'T' in listOfCardsShapes:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'T', 1)
+      if 'S' in listOfCardsShapes:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'S', 1)
+      if 'C' in listOfCardsShapes:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'C', 1)
+      if cardsRemoved >= 3:
+          return
+      if 'J' in listOfCardsShapes:
+          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 1)
+      
+  def tryRemoveCardsShapeFromList(self, cardShapes: list[str], shape: str, maxCardsRemoved: int = 3) -> int:
+      removed = 0
+      for i in range(maxCardsRemoved):
+          if shape not in cardShapes:
+              break
+          cardShapes.remove(shape)
+          removed += 1
+      return removed
+      
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # bonus de regiao conquistada
   # exercitos de bonus de regiao so devem ser colocados na regiao
