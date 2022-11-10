@@ -7,28 +7,30 @@ from random import randrange
 class Dealer():
   JOKERCARDS = 2
   MIN_ARMY_FROM_TERRITORIES_POSSESSED = 3
+  CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE = [4, 6, 8, 10, 12, 15] #...20, 25, 30, 35, 40...
     
   def __init__(self, playersInGame: int, initialTerritoryList: list[Territory], regionList: list[Region]):
     self.players = playersInGame
     self.initialTerritoryList = initialTerritoryList
-    self.quantityOfTerritories = len(self.initialTerritoryList)
     self.regionList = regionList
     self.startingTerritories = []
+    self.numberOfTrades = 0
 
   # retorna a instancia da carta sorteada para o jogador
   # tem chance de virar joker
   def getCardAfterSuccessfullAttack(self) -> Card:
-      territoryId = randrange(0, self.quantityOfTerritories + self.JOKERCARDS)
-      return Card(territoryId, territoryId >= self.quantityOfTerritories)
+      lenTerritoriesList = len(self.initialTerritoryList)
+      territoryId = randrange(0, lenTerritoriesList + self.JOKERCARDS)
+      return Card(territoryId, territoryId >= lenTerritoriesList)
       
   # retorna a lista de territorios iniciais por id de jogador
   def listOfStartingTerritoriesOfAllPlayers(self) -> list[list[int]]:
       usersTerritories = [[] for p in range(self.players)]
-      allTerritoriesId = list(map(lambda t : t.id, self.territoryList))
+      allTerritoriesId = list(map(lambda t : t.id, self.initialTerritoryList))
       # Arbitrario, pode vir como parametro
       nextPlayerToReceiveTerritory = 0 
       while allTerritoriesId:
-          randomListPosition = randrange(0, self.quantityOfTerritories)
+          randomListPosition = randrange(0, len(allTerritoriesId))
           usersTerritories[nextPlayerToReceiveTerritory].append(allTerritoriesId[randomListPosition])
           allTerritoriesId.pop(randomListPosition)
           nextPlayerToReceiveTerritory = (nextPlayerToReceiveTerritory + 1) % self.players
@@ -49,10 +51,17 @@ class Dealer():
   
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # troca de cartas
-  # para cada territorio trocado que o jogador possuir, recebe extra 2 tropas para esse territorio
   # jogador não pode ter mais de 5 cartas na mao
-  def receiveArmyFromTradingCards(self):
-      pass
+  def receiveArmyFromTradingCards(self, handOfCards: list[Card]) -> int:
+      bonusArmy = 0
+      if not self.hasCardsToTrade(handOfCards):
+          return bonusArmy
+      if self.numberOfTrades < len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE):
+          bonusArmy += self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[self.numberOfTrades]
+      else:
+          bonusArmy += (self.numberOfTrades - len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE) + 1) * 5 + self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[-1]
+      self.numberOfTrades += 1
+      return bonusArmy
   
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # bonus de regiao conquistada
