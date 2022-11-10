@@ -1,6 +1,6 @@
-from Territory import *
-from Region import *
-from Card import *
+from classes.Territory import *
+from classes.Region import *
+from classes.Card import *
 from random import randint
 
 
@@ -19,7 +19,7 @@ class Dealer():
   
   # retorna a lista de territorios iniciais por id de jogador
   def listOfStartingTerritoriesOfAllPlayers(self, territoryList: list[Territory]) -> list[list[int]]:
-      allTerritoriesId = list(map(lambda t : t.id ,territoryList))
+      allTerritoriesId = list(map(lambda t : t.id, territoryList))
   
   # retorna a lista de territorios iniciais do jogador
   def startingTerritoriesOfPlayer(self):
