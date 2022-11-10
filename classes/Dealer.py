@@ -12,14 +12,14 @@ class Dealer():
 
   # retorna a instancia da carta sorteada para o jogador
   # tem chance de virar joker
-  def getCardAfterSuccessfullAttack(self) -> Card:
-      territoryId = randint(0, len(territoryId) + self.JOKERCARDS)
-      return Card(territoryId, territoryId >= len(territoryId))
+  def getCardAfterSuccessfullAttack(self, territoryList: list[Territory]) -> Card:
+      territoryId = randint(0, len(territoryList) + self.JOKERCARDS)
+      return Card(territoryId, territoryId >= len(territoryList))
       
   
   # retorna a lista de territorios iniciais por id de jogador
-  def listOfStartingTerritoriesOfAllPlayers(self):
-      pass
+  def listOfStartingTerritoriesOfAllPlayers(self, territoryList: list[Territory]) -> list[list[int]]:
+      allTerritoriesId = list(map(lambda t : t.id ,territoryList))
   
   # retorna a lista de territorios iniciais do jogador
   def startingTerritoriesOfPlayer(self):

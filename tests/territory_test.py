@@ -1,9 +1,8 @@
-from operator import truediv
 import re
-from classes.Card import Card
 from classes.GameMap import *
 from classes.Territory import *
 from classes.Region import *
+from classes.Card import *
 
 testTerritories: list[Territory] = [Territory('0', [1, 2], 0, 'teste1', 0), Territory('0', [0, 4], 0, 'teste2', 1), Territory('1', [0, 3], 0, 'teste3', 2), Territory('1', [2, 4, 5], 1, 'teste4', 3), Territory('0', [3, 1], 1, 'teste5', 4), Territory('1', [3], 0, 'teste6', 5), Territory('0', [7], 2, 'teste6', 6), Territory('0', [6], 2, 'teste7', 7)]
 testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
