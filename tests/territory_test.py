@@ -3,8 +3,9 @@ from classes.GameMap import *
 from classes.Territory import *
 from classes.Region import *
 from classes.Card import *
+from classes.Dealer import *
 
-testTerritories: list[Territory] = [Territory('0', [1, 2], 0, 'teste1', 0), Territory('0', [0, 4], 0, 'teste2', 1), Territory('1', [0, 3], 0, 'teste3', 2), Territory('1', [2, 4, 5], 1, 'teste4', 3), Territory('0', [3, 1], 1, 'teste5', 4), Territory('1', [3], 0, 'teste6', 5), Territory('0', [7], 2, 'teste6', 6), Territory('0', [6], 2, 'teste7', 7)]
+testTerritories: list[Territory] = [Territory('0', [1, 2], 0, 'teste1', 0, 0, 0), Territory('0', [0, 4], 0, 'teste2', 1, 0, 0), Territory('1', [0, 3], 0, 'teste3', 2, 0, 0), Territory('1', [2, 4, 5], 1, 'teste4', 3, 0, 0), Territory('0', [3, 1], 1, 'teste5', 4, 0, 0), Territory('1', [3], 0, 'teste6', 5, 0, 0), Territory('0', [7], 2, 'teste6', 6, 0, 0), Territory('0', [6], 2, 'teste7', 7, 0, 0)]
 testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
 testMap = GameMap(testTerritories, testRegions)
 
@@ -57,7 +58,8 @@ def test_attacking():
   battlesWonByAttackersAndDefenders = testMap.getSuccessfullAttacks(attackerDices, defenderDices)
   assert battlesWonByAttackersAndDefenders[0] == 2
   assert battlesWonByAttackersAndDefenders[1] == 1
-  
+
+
 def card_creation():
   nonJokerCard = Card(0)
   assert nonJokerCard.territoryId == 0
@@ -65,3 +67,8 @@ def card_creation():
   jokerCard = Card(5, True)
   assert jokerCard.territoryId == -1
   assert jokerCard.type == "J"
+  
+def dealer():
+  dealer = Dealer(5, testTerritories, testRegions)
+  territoriesPerPlayer = dealer.listOfStartingTerritoriesOfAllPlayers(testTerritories)
+  assert len(testTerritories) == reduce(lambda tList: len(tList), territoriesPerPlayer)
