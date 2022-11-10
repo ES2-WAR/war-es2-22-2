@@ -6,8 +6,11 @@ class Card():
     if isJoker:
       self.turnIntoJoker()
       return
-    typesOfCard = ['A', 'B', 'C']
-    self.type = choice(typesOfCard)
+    # T = triangle
+    # S = square
+    # C = circle
+    possibleCardShapes = ['T', 'S', 'C']
+    self.shape = choice(possibleCardShapes)
     
   def turnIntoJoker(self):
-    self.type = 'J'
+    self.shape = 'J'
