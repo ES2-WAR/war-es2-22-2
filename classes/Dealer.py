@@ -52,16 +52,38 @@ class Dealer():
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # troca de cartas
   # jogador não pode ter mais de 5 cartas na mao
-  def receiveArmyFromTradingCards(self, handOfCards: list[Card]) -> int:
+  def receiveArmyFromTradingCards(self, handOfCards: list[Card], doAllPossibleTrades: bool = False) -> int:
       bonusArmy = 0
-      if not self.hasCardsToTrade(handOfCards):
-          return bonusArmy
-      if self.numberOfTrades < len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE):
-          bonusArmy += self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[self.numberOfTrades]
-      else:
-          bonusArmy += (self.numberOfTrades - len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE) + 1) * 5 + self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[-1]
-      self.numberOfTrades += 1
+      while self.hasCardsToTrade(handOfCards):
+        tradeThreeCardsPerTroop()
+        if self.numberOfTrades < len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE):
+            bonusArmy += self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[self.numberOfTrades]
+        else:
+            bonusArmy += (self.numberOfTrades - len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE) + 1) * 5 + self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[-1]
+        self.numberOfTrades += 1
+        if not doAllPossibleTrades:
+            break
       return bonusArmy
+  
+  def hasCardsToTrade(self, handOfCards: list[Card]) -> bool:
+      listOfCardsShapes = list(map(lambda c : c.shape, handOfCards))
+      # Com certeza tem combinação de cartas pra troca
+      if len(handOfCards) >= 5:
+          return True
+      # Tem trocas de mesma forma
+      if listOfCardsShapes.count('T') + listOfCardsShapes.count('J') >= 3 or listOfCardsShapes.count('S') + listOfCardsShapes.count('J') >= 3 or listOfCardsShapes.count('C') + listOfCardsShapes.count('J') >= 3:
+          return True
+      # Tem trocas de formas diferentes
+      differentShapesInList = 0
+      if 'T' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'S' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'C' in listOfCardsShapes:
+          differentShapesInList += 1
+      if 'J' in listOfCardsShapes:
+          differentShapesInList += 1
+      return differentShapesInList >= 3
   
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # bonus de regiao conquistada
