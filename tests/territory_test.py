@@ -8,6 +8,9 @@ from classes.Dealer import *
 testTerritories: list[Territory] = [Territory('0', [1, 2], 0, 'teste1', 0, 0, 0), Territory('0', [0, 4], 0, 'teste2', 1, 0, 0), Territory('1', [0, 3], 0, 'teste3', 2, 0, 0), Territory('1', [2, 4, 5], 1, 'teste4', 3, 0, 0), Territory('0', [3, 1], 1, 'teste5', 4, 0, 0), Territory('1', [3], 0, 'teste6', 5, 0, 0), Territory('0', [7], 2, 'teste6', 6, 0, 0), Territory('0', [6], 2, 'teste7', 7, 0, 0)]
 testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
 testMap = GameMap(testTerritories, testRegions)
+nonJokerCard = Card(0)
+jokerCard = Card(5, True)
+dealer = Dealer(5, testTerritories, testRegions)
 
 def test_neighbourhoods():
   
@@ -25,17 +28,17 @@ def test_regions():
 
 def test_troopsMovement():
   assert testMap.moveTroopsBetweenFriendlyTerrirories(0, 1, 5) == [0, 1]
-  assert testTerritories[0].numberOfTroops == 5
-  assert testTerritories[1].numberOfTroops == 15
+  assert testTerritories[0].numberOfTroops == 10
+  assert testTerritories[1].numberOfTroops == 20
   assert testMap.moveTroopsBetweenFriendlyTerrirories(0, 1, 5) == [0, 1]
-  assert testTerritories[0].numberOfTroops == 1
-  assert testTerritories[1].numberOfTroops == 19
+  assert testTerritories[0].numberOfTroops == 5
+  assert testTerritories[1].numberOfTroops == 25
   assert testMap.moveTroopsBetweenFriendlyTerrirories(2, 1, 2) == []
-  assert testTerritories[2].numberOfTroops == 10
-  assert testTerritories[1].numberOfTroops == 19
+  assert testTerritories[2].numberOfTroops == 15 
+  assert testTerritories[1].numberOfTroops == 25
   assert testMap.moveTroopsBetweenFriendlyTerrirories(2, 5, 2) == [2, 3, 5]
-  assert testTerritories[2].numberOfTroops == 8
-  assert testTerritories[5].numberOfTroops == 12
+  assert testTerritories[2].numberOfTroops == 13
+  assert testTerritories[5].numberOfTroops == 17
   
 def test_troopsManipulation():
   testTerritories[6].gainTroops(2)
@@ -59,16 +62,13 @@ def test_attacking():
   assert battlesWonByAttackersAndDefenders[0] == 2
   assert battlesWonByAttackersAndDefenders[1] == 1
 
-
-def card_creation():
-  nonJokerCard = Card(0)
+def test_card_creation():
   assert nonJokerCard.territoryId == 0
   assert nonJokerCard.type in ['A', 'B', 'C']
-  jokerCard = Card(5, True)
   assert jokerCard.territoryId == -1
   assert jokerCard.type == "J"
   
-def dealer():
-  dealer = Dealer(5, testTerritories, testRegions)
+def test_dealing():
   territoriesPerPlayer = dealer.listOfStartingTerritoriesOfAllPlayers(testTerritories)
-  assert len(testTerritories) == reduce(lambda tList: len(tList), territoriesPerPlayer)
+  assert len(testTerritories) == len(sum(territoriesPerPlayer, []))
+  

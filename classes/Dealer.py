@@ -1,7 +1,7 @@
 from classes.Territory import *
 from classes.Region import *
 from classes.Card import *
-from random import randint
+from random import randrange
 
 
 class Dealer():
@@ -13,13 +13,22 @@ class Dealer():
   # retorna a instancia da carta sorteada para o jogador
   # tem chance de virar joker
   def getCardAfterSuccessfullAttack(self, territoryList: list[Territory]) -> Card:
-      territoryId = randint(0, len(territoryList) + self.JOKERCARDS)
+      territoryId = randrange(0, len(territoryList) + self.JOKERCARDS)
       return Card(territoryId, territoryId >= len(territoryList))
       
   
   # retorna a lista de territorios iniciais por id de jogador
   def listOfStartingTerritoriesOfAllPlayers(self, territoryList: list[Territory]) -> list[list[int]]:
+      usersTerritories = [[] for p in range(self.players)]
       allTerritoriesId = list(map(lambda t : t.id, territoryList))
+      # Arbitrario, pode vir como parametro
+      nextPlayerToReceiveTerritory = 0 
+      while allTerritoriesId:
+          randomListPosition = randrange(0, len(allTerritoriesId))
+          usersTerritories[nextPlayerToReceiveTerritory].append(allTerritoriesId[randomListPosition])
+          allTerritoriesId.pop(randomListPosition)
+          nextPlayerToReceiveTerritory = (nextPlayerToReceiveTerritory + 1) % self.players
+      return usersTerritories
   
   # retorna a lista de territorios iniciais do jogador
   def startingTerritoriesOfPlayer(self):
