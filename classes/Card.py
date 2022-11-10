@@ -11,5 +11,5 @@ class Card():
     self.territoryId = territoryId
     
   def turnIntoJoker(self):
-    self.type = 'R'
+    self.type = 'J'
     self.territoryId = -1

@@ -1,4 +1,6 @@
+from operator import truediv
 import re
+from classes.Card import Card
 from classes.GameMap import *
 from classes.Territory import *
 from classes.Region import *
@@ -57,3 +59,10 @@ def test_attacking():
   assert battlesWonByAttackersAndDefenders[0] == 2
   assert battlesWonByAttackersAndDefenders[1] == 1
   
+def card_creation():
+  nonJokerCard = Card(0)
+  assert nonJokerCard.territoryId == 0
+  assert nonJokerCard.type in ['A', 'B', 'C']
+  jokerCard = Card(5, True)
+  assert jokerCard.territoryId == -1
+  assert jokerCard.type == "J"
