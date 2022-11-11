@@ -63,7 +63,7 @@ def test_attacking():
   assert battlesWonByAttackersAndDefenders[1] == 1
 
 def test_card_creation():
-  assert nonJokerCard.shape in ['A', 'B', 'C']
+  assert nonJokerCard.shape in ['T', 'S', 'C']
   assert jokerCard.shape == "J"
   
 def test_dealing():
