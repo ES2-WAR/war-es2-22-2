@@ -33,8 +33,11 @@ def test_diceRolls():
 
 ## Executável
 
-*Carregando...*
+Para rodar, executar no terminal:
 
+```console
+python classes/Game.py
+```
 ## Mais sobre o Projeto
 
 * [Slides AP1](https://docs.google.com/presentation/d/1qFW--yI3nPFE5_KXwz0WO52rEL3GsVqu6Xc1tL2T6ew/edit#slide=id.p) - Primeira apresentação
