@@ -35,7 +35,7 @@ def test_diceRolls():
 
 Para rodar, executar no terminal:
 
-```console
+```bash
 python classes/Game.py
 ```
 ## Mais sobre o Projeto
