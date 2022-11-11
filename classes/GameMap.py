@@ -96,7 +96,7 @@ class GameMap():
     totalTroopsLostByAttackerAndDefender = [0, 0]
     if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return totalTroopsLostByAttackerAndDefender
     while self.territories[attackerTerritoryId].canAttack() and self.territories[attackerTerritoryId].color != self.territories[defenderTerritoryId].color:
-      print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
+      #print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
       troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId, self.territories[attackerTerritoryId].getNonDefendingTroops())
       totalTroopsLostByAttackerAndDefender[0] += troopsLostByAttackerAndDefender[0]
       totalTroopsLostByAttackerAndDefender[1] += troopsLostByAttackerAndDefender[1]
