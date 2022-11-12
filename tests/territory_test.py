@@ -10,7 +10,8 @@ testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2
 testMap = GameMap(testTerritories, testRegions)
 nonJokerCard = Card()
 jokerCard = Card(True)
-dealer = Dealer(5, testTerritories, testRegions)
+NUMBER_OF_PLAYERS = 5
+dealer = Dealer(NUMBER_OF_PLAYERS, testTerritories, testRegions)
 
 def test_neighbourhoods():
   
@@ -75,7 +76,13 @@ def test_card_creation():
   
 def test_dealing_territories():
   territoriesPerPlayer = dealer.listOfStartingTerritoriesOfAllPlayers()
+  # testa se todos os territorios foram distribuidos
   assert len(testTerritories) == len(sum(territoriesPerPlayer, []))
+  allTerritories = sum(territoriesPerPlayer, [])
+  # testa se repetiu algum territorio
+  assert len(allTerritories) == len(list(set(allTerritories)))
+  minSize = len(testTerritories) // NUMBER_OF_PLAYERS
+  assert all(minSize <= len(listOfTer) <= (minSize + 1) for listOfTer in territoriesPerPlayer)
   
 def test_trading_cards():
   circle =  Card()
