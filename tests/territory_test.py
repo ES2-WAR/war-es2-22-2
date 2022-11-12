@@ -65,8 +65,17 @@ def test_attacking():
 def test_card_creation():
   assert nonJokerCard.shape in ['T', 'S', 'C']
   assert jokerCard.shape == "J"
+  canCreateRandomJokerCards = False
+  for i in range(1000):
+    jokerTest = dealer.getCardAfterSuccessfullAttack()
+    if jokerTest.shape == "J":
+      canCreateRandomJokerCards = True
+      break
+  assert canCreateRandomJokerCards
   
-def test_dealing():
+def test_dealing_territories():
   territoriesPerPlayer = dealer.listOfStartingTerritoriesOfAllPlayers()
   assert len(testTerritories) == len(sum(territoriesPerPlayer, []))
   
+def test_trading_cards():
+  circle =  Card()

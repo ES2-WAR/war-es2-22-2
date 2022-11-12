@@ -21,7 +21,7 @@ class Dealer():
   def getCardAfterSuccessfullAttack(self) -> Card:
       lenTerritoriesList = len(self.initialTerritoryList)
       territoryId = randrange(0, lenTerritoriesList + self.JOKERCARDS)
-      return Card(territoryId, territoryId >= lenTerritoriesList)
+      return Card(territoryId >= lenTerritoriesList)
       
   # retorna a lista de territorios iniciais por id de jogador
   def listOfStartingTerritoriesOfAllPlayers(self) -> list[list[int]]:
