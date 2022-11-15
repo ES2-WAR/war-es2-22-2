@@ -4,6 +4,7 @@ from classes.Territory import *
 from classes.Region import *
 from classes.Card import *
 from classes.Dealer import *
+from copy import deepcopy
 
 testTerritories: list[Territory] = [Territory('0', [1, 2], 0, 'teste1', 0, 0, 0), Territory('0', [0, 4], 0, 'teste2', 1, 0, 0), Territory('1', [0, 3], 0, 'teste3', 2, 0, 0), Territory('1', [2, 4, 5], 1, 'teste4', 3, 0, 0), Territory('0', [3, 1], 1, 'teste5', 4, 0, 0), Territory('1', [3], 0, 'teste6', 5, 0, 0), Territory('0', [7], 2, 'teste6', 6, 0, 0), Territory('0', [6], 2, 'teste7', 7, 0, 0)]
 testRegions: list[Region] = [Region('a', 3, 0), Region('b', 2, 1), Region('c', 2, 2)]
@@ -85,4 +86,24 @@ def test_dealing_territories():
   assert all(minSize <= len(listOfTer) <= (minSize + 1) for listOfTer in territoriesPerPlayer)
   
 def test_trading_cards():
+  #TTTTTSSSCCCCCCCCJJ
+  #TTTTTSSSCCCCCCCCJJ
+  cards = []
   circle =  Card()
+  circle.shape = 'C'
+  triangle =  Card()
+  triangle.shape = 'T'
+  square =  Card()
+  square.shape = 'S'
+  joker =  Card()
+  joker.shape = 'J'
+  for i in range(8):
+    cards.append(deepcopy(circle))
+  for i in range(5):
+    cards.append(deepcopy(triangle))
+  for i in range(3):
+    cards.append(deepcopy(square))
+  for i in range(2):
+    cards.append(deepcopy(joker))
+  armyFromCards = dealer.receiveArmyFromTradingCards(cards, True)
+  assert armyFromCards == 55

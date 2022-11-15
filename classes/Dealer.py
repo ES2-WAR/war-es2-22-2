@@ -54,8 +54,11 @@ class Dealer():
   # jogador não pode ter mais de 5 cartas na mao
   def receiveArmyFromTradingCards(self, handOfCards: list[Card], doAllPossibleTrades: bool = False) -> int:
       bonusArmy = 0
-      while self.hasCardsToTrade(handOfCards):
-        self.tradeThreeCardsPerTroop(handOfCards)
+      maxTrades = (len(handOfCards) // 3) + 1
+      for i in range(maxTrades):
+        if not self.hasCardsToTrade(handOfCards):
+            break
+        self.tradeThreeCards(handOfCards)
         if self.numberOfTrades < len(self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE):
             bonusArmy += self.CARD_QUANTITY_OF_ARMY_RECEIVED_PER_TRADE[self.numberOfTrades]
         else:
@@ -87,28 +90,28 @@ class Dealer():
   
   # previne remover cartas sem conseguir efetuar trocas
   # embora so entre nessa funcao se tiver ja verificado se consegue trocar
-  def tradeThreeCardsPerTroop(self, handOfCards: list[Card]):
+  def tradeThreeCards(self, handOfCards: list[Card]):
       listOfCardsShapes = list(map(lambda c : c.shape, handOfCards))
       cardsRemoved = 0
       if listOfCardsShapes.count('T') + listOfCardsShapes.count('J') >= 3:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'T')
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'T')
           if cardsRemoved >= 3:
               return
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'J', 3-cardsRemoved)
           return
           
       if listOfCardsShapes.count('S') + listOfCardsShapes.count('J') >= 3:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'S')
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'S')
           if cardsRemoved >= 3:
               return
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'J', 3-cardsRemoved)
           return
           
       if listOfCardsShapes.count('C') + listOfCardsShapes.count('J') >= 3:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'C')
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'C')
           if cardsRemoved >= 3:
               return
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 3-cardsRemoved)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'J', 3-cardsRemoved)
           return
           
       differentShapesInList = 0
@@ -124,23 +127,24 @@ class Dealer():
           return
       
       if 'T' in listOfCardsShapes:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'T', 1)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'T', 1)
       if 'S' in listOfCardsShapes:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'S', 1)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'S', 1)
       if 'C' in listOfCardsShapes:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'C', 1)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'C', 1)
       if cardsRemoved >= 3:
           return
       if 'J' in listOfCardsShapes:
-          cardsRemoved += self.tryRemoveCardsShapeFromList(listOfCardsShapes, 'J', 1)
+          cardsRemoved += self.tryRemoveCardsShapeFromList(handOfCards, 'J', 1)
       
-  def tryRemoveCardsShapeFromList(self, cardShapes: list[str], shape: str, maxCardsRemoved: int = 3) -> int:
+  def tryRemoveCardsShapeFromList(self, cards: list[Card], shape: str, maxCardsRemoved: int = 3) -> int:
       removed = 0
-      for i in range(maxCardsRemoved):
-          if shape not in cardShapes:
-              break
-          cardShapes.remove(shape)
-          removed += 1
+      for card in cards:
+          if removed >= maxCardsRemoved:
+            break      
+          if card.shape == shape:
+            cards.remove(card)    
+            removed += 1
       return removed
       
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
