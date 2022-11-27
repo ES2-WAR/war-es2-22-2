@@ -149,6 +149,11 @@ class Dealer():
       
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # bonus de regiao conquistada
-  # exercitos de bonus de regiao so devem ser colocados na regiao
-  def receiveArmyFromPossessedRegions(self, currentTerritoriesList: list[Territory]) -> int:
-      pass
+  def receiveArmyFromPossessedRegions(self, attackerColor: str, currentTerritoriesList: list[Territory]) -> int:
+      troops = 0
+      for regionId in range(len(self.regionList)):
+          regionTerritories = list(filter(lambda x: x.regionId == regionId, currentTerritoriesList))
+          if all(territory.color == attackerColor for territory in regionTerritories):
+              troops += self.regionList[regionId].troopBonus
+      return troops
+  
