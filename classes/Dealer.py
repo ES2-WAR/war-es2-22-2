@@ -1,6 +1,7 @@
 from classes.Territory import *
 from classes.Region import *
 from classes.Card import *
+from classes.Player import *
 from random import randrange
 
 
@@ -46,8 +47,9 @@ class Dealer():
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # metade dos territorios conquistados 
   # minimo de exercitos a receber é sempre 3
-  def receiveArmyFromPossessedTerritories(self, currentTerritoriesList: list[Territory]) -> int:
-      return max(self.MIN_ARMY_FROM_TERRITORIES_POSSESSED, len(currentTerritoriesList) // 2)
+  def receiveArmyFromPossessedTerritories(self, player: Player, currentTerritoriesList: list[Territory]) -> int:
+      playerTerritoriesList = list(filter(lambda x: x.color == player.color, currentTerritoriesList))
+      return max(self.MIN_ARMY_FROM_TERRITORIES_POSSESSED, len(playerTerritoriesList) // 2)
   
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # troca de cartas
@@ -149,11 +151,11 @@ class Dealer():
       
   # retorna a quantidade de exercitos que deve ser colocado no tabuleiro antes do ataque
   # bonus de regiao conquistada
-  def receiveArmyFromPossessedRegions(self, attackerColor: str, currentTerritoriesList: list[Territory]) -> int:
+  def receiveArmyFromPossessedRegions(self, player: Player, currentTerritoriesList: list[Territory]) -> int:
       troops = 0
       for regionId in range(len(self.regionList)):
           regionTerritories = list(filter(lambda x: x.regionId == regionId, currentTerritoriesList))
-          if all(territory.color == attackerColor for territory in regionTerritories):
+          if all(territory.color == player.color for territory in regionTerritories):
               troops += self.regionList[regionId].troopBonus
       return troops
   
