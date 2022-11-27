@@ -1,7 +1,7 @@
 import pygame
 import pygame.gfxdraw
 
-from Territory import Territory
+from classes.Territory import *
 
 PIECE_IMG = pygame.Surface((30,30), pygame.SRCALPHA)
 COLORS = { 
