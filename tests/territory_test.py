@@ -15,19 +15,21 @@ NUMBER_OF_PLAYERS = 5
 dealer = Dealer(NUMBER_OF_PLAYERS, testTerritories, testRegions)
 
 def test_neighbourhoods():
-  
   assert testMap.getFriendlyTerritoryNeighbours(3) == [2, 5]
   assert testMap.getHostileTerritoryNeighbours(0) == [2]
   assert testMap.getHostileTerritoryNeighbours(5) == []
   assert testMap.getTerritoryNeighbours(3) == [2, 4, 5]
 
 def test_regions():
-  
   assert testMap.filterTerritoriesByRegion(1) == [3, 4]
   assert testMap.filterTerritoriesByRegion(0) == [0, 1, 2, 5]
   assert testMap.filterTerritoriesByRegion(2) == [6, 7]
   assert testMap.filterTerritoriesByRegion(3) == []
 
+def test_region_bonus():
+  assert dealer.receiveArmyFromPossessedRegions('0', testTerritories) == 2
+  assert dealer.receiveArmyFromPossessedRegions('1', testTerritories) == 0
+  
 def test_troopsMovement():
   assert testMap.moveTroopsBetweenFriendlyTerrirories(0, 1, 5) == [0, 1]
   assert testTerritories[0].numberOfTroops == 10
@@ -107,3 +109,4 @@ def test_trading_cards():
     cards.append(deepcopy(joker))
   armyFromCards = dealer.receiveArmyFromTradingCards(cards, True)
   assert armyFromCards == 55
+  
