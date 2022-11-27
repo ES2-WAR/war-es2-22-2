@@ -7,11 +7,8 @@ from Player import *
 
 
 class IA(Player):     # herda da classe player
-    def __init__(self, territoryList: list[Territory], regionList: list[Region]):
-        self.mapTerritories = territoryList
-        self.territories: list[Territory]
-        self.regions = regionList
-
+    def __init__(self):
+        pass
 
     def get_territories(self, idterritory: int):
         for territory in self.territories:
@@ -23,32 +20,48 @@ class IA(Player):     # herda da classe player
 
     def sort_territories_by_bsr_descendant(self):
         self.territories.sort(key= lambda x: x.bsr, reverse=True)
+    
+    def set_border_countries(self):
+        self.borderCountries = filter(lambda x: x.bst != 0, self.territories)
 
-    def attack(self):
-        self.sort_territories_by_bsr_ascendant()
-        for terriroty in self.territories:
-            if terriroty.bsr >= 1:
-                break
-            else:
-                hostile_neighbours = GameMap.getHostileTerritoryNeighbours(terriroty.id)
-                hostile_neighbours.sort(key= lambda x: x.numberOfTroops)
-                for hostile in hostile_neighbours:
-                    if hostile.numberOfTroops >= terriroty.numberOfTroops:
-                        break
-                    else:
-                        pass # ATTACK -> pensando em faazer uma funcao auxiliar que faz esse ataque, inves de copiar toda aquela logica aqui
+       
+    def initiation_attack(self):
+        self.set_border_countries()
+        originCountries: list[Territory]
+        for country in self.borderCountries:
+            if country.bsr < 0.9:
+                originCountries.append(country)
+        self.main_attack(originCountries)
+    
+    def main_attack(self, originCountries: list[Territory]):
+        while originCountries:
+            country = originCountries.pop(0)
+            targetCountries = sorted(GameMap.getHostileTerritoryNeighbours(country.id), key= lambda x: x.numberOfTroops)
+            for target in targetCountries:
+                targetTroops = target.numberOfTroops # soh fiz isso pra comparacao com as perdas depois
+                if targetTroops >= country.numberOfTroops:
+                    break
+                losses = GameMap.attackEnemyTerritoryBlitz(country.id, target.id)
+                if losses[1] == targetTroops:
+                    self.borderCountries.append(target)
 
-    def supply(self, additionalTroops: int):
+
+    def supply(self, additionalTroops: int):    # objetivo é deixar a distribuicao de tropas nos territorios a mais equilibrada possivel
+        self.set_border_countries()
         while additionalTroops > 0:
-            self.sort_territories_by_bsr_descendant()
-            # SUPPLY NO PRIMEIRO TERRITORIO DA LISTA -> fazer a logica de supply 
-            additionalTroops = additionalTroops - 1
+            targetCountries = sorted(self.borderCountries, key= lambda country: country.bsr, reverse=True) # ordenar pelos bsr mais altos
+            if targetCountries[0].gainTroops(1):
+                additionalTroops = additionalTroops -1
 
-    def move_troops(self):
-        self.sort_territories_by_bsr_ascendant
-        for i in range(len(self.territories)):
-            if self.territories[i].numberOfTroops > 1:
-                pass # MOVE ENTRE self.territories[i] e self.territories[-1-i]
-
-            
-                
+    def move(self):
+        innerCountries =  filter(lambda x: x.bst == 0, self.territories)
+        originCountries = filter(lambda country: country.numberOfTroops > 1, innerCountries)
+        
+        while originCountries:
+            origin = originCountries.pop(0)
+            targetCountries = sorted(self.set_border_countries(), key= lambda country: country.bsr, reverse=True)
+            for target in targetCountries:
+                if GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 100):
+                    break
+                    
+                        
