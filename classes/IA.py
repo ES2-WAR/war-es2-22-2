@@ -9,17 +9,6 @@ from Player import *
 class IA(Player):     # herda da classe player
     def __init__(self):
         pass
-
-    def get_territories(self, idterritory: int):
-        for territory in self.territories:
-            if territory.id == idterritory:
-                return territory.getDefendingTroops()
-
-    def sort_territories_by_bsr_ascendant(self):
-        self.territories.sort(key= lambda x: x.bsr)
-
-    def sort_territories_by_bsr_descendant(self):
-        self.territories.sort(key= lambda x: x.bsr, reverse=True)
     
     def set_border_countries(self):
         self.borderCountries = filter(lambda x: x.bst != 0, self.territories)
@@ -61,9 +50,11 @@ class IA(Player):     # herda da classe player
             origin = originCountries.pop(0)
             targetCountries = sorted(self.set_border_countries(), key= lambda country: country.bsr, reverse=True)
             for target in targetCountries:
-                path = GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 100)
+                path = GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 100)      # ideia é mandar todas as tropas para o territorio que mais precisa
                 if path != []:
                     break
 
+
+        # fazer a parte de movimentacao das tropas de territorios com bsr baixo para territorios com bsr alto
                     
                         
