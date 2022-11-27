@@ -9,6 +9,8 @@ from classes.Region import *
 from classes.GameMap import *
 from classes.Dealer import *
 from classes.Player import *
+import pygame_gui
+
 
 pygame.init()
 FONT_SIZE = 15
@@ -39,7 +41,25 @@ class Game:
     self.gameMap = GameMap(self.territories, self.regions)
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("Arial", FONT_SIZE)
-
+    self.manager = pygame_gui.UIManager((1200, 800))
+    self.clock = pygame.time.Clock()
+    self.blitzButton = pygame_gui.elements.UIButton(
+      relative_rect=pygame.Rect((0, -160), (100, 50)),
+      text='Blitz',
+      manager=self.manager,
+      anchors={
+        'centerx': 'centerx',
+        'bottom': 'bottom'
+      }
+    )
+    self.selectableTroops = pygame_gui.elements.UISelectionList(
+      relative_rect=pygame.Rect((0, -100), (200, 100)),
+      item_list=['1', '2', '3'], manager=self.manager,
+      anchors={
+        'centerx': 'centerx',
+        'bottom': 'bottom'
+      } )
+     
     # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
     self.pieces_group = pygame.sprite.Group()
     self.selected_pieces_group = pygame.sprite.Group()
@@ -162,6 +182,7 @@ class Game:
       self.graphicalMap.image.blit(piece.frame, piece.rect)
       self.graphicalMap.image.blit(text, (piece.rect[0] + FONT_SIZE/2, piece.rect[1] + FONT_SIZE/2))
     pygame.display.flip()
+    self.manager.draw_ui(self.graphicalMap.image)
 
   def onCleanup(self):
     pygame.quit()
@@ -171,8 +192,11 @@ class Game:
       self.running = False
 
     while(self.running):
+      timeDelta = self.clock.tick(60)/1000.0
       for event in pygame.event.get():
         self.onEvent(event)
+        self.manager.process_events(event)
+      self.manager.update(timeDelta)
       self.onLoop()
       self.onRender()
 
