@@ -61,7 +61,9 @@ class IA(Player):     # herda da classe player
             origin = originCountries.pop(0)
             targetCountries = sorted(self.set_border_countries(), key= lambda country: country.bsr, reverse=True)
             for target in targetCountries:
-                if GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 100):
+                path = GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 100)
+                if path != []:
                     break
+
                     
                         
