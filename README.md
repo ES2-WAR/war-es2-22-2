@@ -39,9 +39,11 @@ Para rodar o jogo:
 python .\main.py
 ```
 
-## Executável
-*Carregando...*
+Para rodar, executar no terminal:
 
+```bash
+python classes/Game.py
+```
 ## Mais sobre o Projeto
 
 * [Slides AP1](https://docs.google.com/presentation/d/1qFW--yI3nPFE5_KXwz0WO52rEL3GsVqu6Xc1tL2T6ew/edit#slide=id.p) - Primeira apresentação
