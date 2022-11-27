@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```
 ## Rodando os testes
 
-Para rodar os testes automatizados, utilize:
+Para rodar os testes automatizados:
 
 ```
 pytest
@@ -31,7 +31,13 @@ def test_diceRolls():
     assert len(testMap.rollDices(2)) == 2
 ```
 
-## Executável
+## Executando
+
+Para rodar o jogo:
+
+```
+python .\main.py
+```
 
 Para rodar, executar no terminal:
 

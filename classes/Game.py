@@ -1,12 +1,12 @@
 from typing import Tuple
 import pygame
 from pygame.locals import *
-from GraphicalMap import *
-from Window import *
-from Piece import *
-from Territory import *
-from Region import *
-from GameMap import *
+from classes.GraphicalMap import *
+from classes.Window import *
+from classes.Piece import *
+from classes.Territory import *
+from classes.Region import *
+from classes.GameMap import *
 
 pygame.init()
 FONT_SIZE = 15
