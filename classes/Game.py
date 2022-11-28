@@ -141,10 +141,10 @@ class Game:
       troopsToReceive += self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
       print(">>", player.color, "received", troopsToReceive, "troops")
       self.troopsToDeploy = troopsToReceive
-      self.gameStage = "DEPLOY"
+      self.goToNextStage()
       
     if self.gameStage == "DEPLOY" and self.troopsToDeploy <= 0:
-        self.gameStage = "ATTACK"
+      self.goToNextStage()
 
   def onRender(self):
     self.window.showMap(self.graphicalMap.image)
