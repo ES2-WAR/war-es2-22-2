@@ -1,9 +1,8 @@
 from functools import *
 
 class Territory():
-  def __init__(self, color: str, neighbours: list[int], regionId: int, territoryName: str, territoryId: int, pos_x: int, pos_y: int):
+  def __init__(self, neighbours: list[int], regionId: int, territoryName: str, territoryId: int, pos_x: int, pos_y: int):
     self.id = territoryId
-    self.color = color
     self.neighbours = neighbours
     self.numberOfTroops = 15
     self.regionId = regionId
