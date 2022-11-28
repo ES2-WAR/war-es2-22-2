@@ -103,14 +103,15 @@ class Game:
     
     if event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
-      invalidatePieceClick = False
+      isPlayerTurn = self.playerRound == 0
       pieceClickedTerritorryId = -1
       for piece in pieces:
         if piece.rect.collidepoint(mousePosition[0], mousePosition[1]):
           pieceClickedTerritorryId = piece.territoryId
           break
-      # se clicar em alguma UI, invalida
-      if not invalidatePieceClick:
+        
+      # se não for round dele, invalida
+      if isPlayerTurn:
         self.handlePieceClick(pieceClickedTerritorryId)
         
     if event.type == pygame.KEYDOWN:
