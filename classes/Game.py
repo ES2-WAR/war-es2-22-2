@@ -74,25 +74,35 @@ class Game:
   def handlePieceClick(self, pieceTerritoryId: int):
     if pieceTerritoryId == -1: #reset selected pieces
       self.gameMap.selectedTerritories = [-1, -1]
-    if self.gameMap.selectedTerritories[0] == -1:
+      return
+    if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
-    elif pieceTerritoryId != self.gameMap.selectedTerritories[0]: 
+    else:
       self.gameMap.selectedTerritories[1] = pieceTerritoryId
+    
+    if self.gameStage == "DEPLOY":
+      return
+  
+    if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
       if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color == self.gameMap.territories[self.gameMap.selectedTerritories[1]].color:
-        path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
-        if path == []:
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
-          self.gameMap.selectedTerritories[1] = -1
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
-        else:
-          self.gameMap.selectedTerritories = [-1, -1]
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
+        return
+      losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+      if not (losses[0] == losses[1] == 0): 
+        self.gameMap.selectedTerritories = [-1, -1]
       else:
-        losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
-        if not (losses[0] == losses[1] == 0): 
-          self.gameMap.selectedTerritories = [-1, -1]
-        else:
-          self.gameMap.selectedTerritories[1] = -1
+        self.gameMap.selectedTerritories[1] = -1
+        
+    if self.gameStage == "FORTIFY" and -1 not in self.gameMap.selectedTerritories:
+      if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color != self.gameMap.territories[self.gameMap.selectedTerritories[1]].color:
+        return
+      path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
+      if path == []:
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+        self.gameMap.selectedTerritories[1] = -1
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+      else:
+        self.gameMap.selectedTerritories = [-1, -1]
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
     
 
   def onEvent(self, event):
