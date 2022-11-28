@@ -13,6 +13,11 @@ class IA(Player):     # herda da classe player
     def set_border_countries(self):
         self.borderCountries = filter(lambda x: x.bst != 0, self.territories)
 
+    def sort_bsr_ascendant(self):
+        return filter(lambda y: y.bsr < 0.5, sorted(filter(lambda x: x.numberOfTroops > 1, self.terrotories), key=lambda country: country.bsr))
+
+    def sort_bsr_descendant(self):
+        return filter(lambda y: y.bsr > 1, sorted(self.terrotories, key=lambda country: country.bsr, reverse=True))
        
     def initiation_attack(self):
         self.set_border_countries()
@@ -56,5 +61,13 @@ class IA(Player):     # herda da classe player
 
 
         # fazer a parte de movimentacao das tropas de territorios com bsr baixo para territorios com bsr alto
-                    
-                        
+        originCountries = self.sort_bsr_ascendant()
+        targetCountries = self.sort_bsr_descendant()
+
+        while originCountries:
+            origin = originCountries.pop(0)
+            for target in targetCountries:
+                path = GameMap.moveTroopsBetweenFriendlyTerrirories(origin.id, target.id, 1)
+                if origin.bsr > 0.5: # movimentacao 'prejudicou' a origem, deve retornar a tropa
+                    GameMap.moveTroopsBetweenFriendlyTerrirories(target.id, origin.id, 1)
+                    break
