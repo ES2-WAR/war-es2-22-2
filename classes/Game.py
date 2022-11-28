@@ -9,6 +9,7 @@ from classes.Region import *
 from classes.GameMap import *
 from classes.Dealer import *
 from classes.Player import *
+from classes.GameUI import *
 import pygame_gui
 
 
@@ -43,23 +44,30 @@ class Game:
     self.font = pygame.font.SysFont("Arial", FONT_SIZE)
     self.manager = pygame_gui.UIManager((1200, 800))
     self.clock = pygame.time.Clock()
-    self.blitzButton = pygame_gui.elements.UIButton(
-      relative_rect=pygame.Rect((0, -160), (100, 50)),
-      text='Blitz',
-      manager=self.manager,
-      anchors={
-        'centerx': 'centerx',
-        'bottom': 'bottom'
-      }
-    )
-    self.selectableTroops = pygame_gui.elements.UISelectionList(
-      relative_rect=pygame.Rect((0, -100), (200, 100)),
-      item_list=['1', '2', '3'], manager=self.manager,
-      anchors={
-        'centerx': 'centerx',
-        'bottom': 'bottom'
-      } )
-     
+    # self.gameUI.blitzButton = pygame_gui.elements.UIButton(
+    #   relative_rect=pygame.Rect((0, -160), (100, 50)),
+    #   text='Blitz',
+    #   manager=self.manager,
+    #   anchors={
+    #     'centerx': 'centerx',
+    #     'bottom': 'bottom'
+    #   }
+    # )
+    self.gameUI = GameUI(self.manager)
+    self.gameUI.setPhase('Attack')
+    # self.gameUI.blitzButton.hide()
+    # self.gameUI.blitzButton.disable()
+    # self.gameUI.selectableTroops = pygame_gui.elements.UISelectionList(
+    #   relative_rect=pygame.Rect((0, -100), (200, 70)),
+    #   item_list=[], manager=self.manager,
+    #   anchors={
+    #     'centerx': 'centerx',
+    #     'bottom': 'bottom'
+    #   }
+    # )
+    # self.gameUI.selectableTroops.hide()
+    # self.gameUI.selectableTroops.disable()
+
     # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
     self.pieces_group = pygame.sprite.Group()
     self.selected_pieces_group = pygame.sprite.Group()
@@ -136,6 +144,16 @@ class Game:
     if event.type == pygame.QUIT:
       self.running = False
     
+    if event.type == pygame_gui.UI_BUTTON_PRESSED:
+      if not self.gameUI.blitzButton.hovered:
+        print("Lista pressionada")
+        print("Lista: {}".format(str(self.gameUI.selectableTroops.item_list)))
+      #botão da seleção apertado
+      else:
+        print("botao")
+        # self.gameUI.selectableTroops.add_items(['banana'])
+        # self.gameUI.selectableTroops.remove_items(list(map(lambda x: x['text'], self.gameUI.selectableTroops.item_list)))
+
     if event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
       isPlayerTurn = self.playerRound == 0
