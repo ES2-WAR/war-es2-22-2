@@ -7,16 +7,9 @@ from classes.Dealer import *
 
 class IA(Player):     # herda da classe player
             
-    def __init__(self, game: GameMap, playerId: int, playerName: str, color: str, isAI: bool = False):
+    def __init__(self, game: GameMap, playerId: int, playerName: str, color: str, isAI: bool = True):
         super().__init__(playerId, playerName, color, isAI)
         self.game = game
-    
-    def get_territories(self):
-        player_territories = []
-        for territory in self.game.territories:
-            if territory.color == self.color:
-                player_territories.append(territory)
-        return player_territories
       
     
     def set_border_countries(self):
