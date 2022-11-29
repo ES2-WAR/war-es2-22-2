@@ -16,7 +16,7 @@ class GameUI:
     self.blitzButton.disable()
     self.selectableTroops = pygame_gui.elements.UISelectionList(
       relative_rect=pygame.Rect((0, -100), (200, 70)),
-      item_list=['1', '2', '3', '4', '5'], manager=manager,
+      item_list=[], manager=manager,
       anchors={
         'centerx': 'centerx',
         'bottom': 'bottom'
@@ -43,9 +43,13 @@ class GameUI:
       self.blitzButton.enable()
       self.selectableTroops.show()
       self.selectableTroops.enable()
+    elif phase == 'Move' or phase == 'Deploy':
+      self.selectableTroops.show()
+      self.selectableTroops.enable()
     self.phase = phase
-  
+
   def getSelectedOptionFromList(self):
-    selection = list(filter(lambda item: item['selected'], self.selectableTroops.item_list))
+    selection = list(filter(lambda item: item['selected'] == True, self.selectableTroops.item_list))
+    print("selection: {}".format(selection))
     if len(selection) == 0: return None
-    return int(selection[0].text)
+    return int(selection[0]['text'])
