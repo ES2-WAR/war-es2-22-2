@@ -50,7 +50,8 @@ class IA(Player):     # herda da classe player
         self.main_attack(originCountries)
     
     def main_attack(self, originCountries: list[Territory]):
-        while originCountries:
+        tries_left = 30
+        while originCountries and tries_left:
             country = originCountries.pop(0)
             targetCountries = sorted(country.getHostileTerritoryNeighbours(self.game.territories), key= lambda x: x.numberOfTroops)
             for target in targetCountries:
@@ -70,6 +71,7 @@ class IA(Player):     # herda da classe player
                 print(f'{country.name} tem {country.numberOfTroops} tropas e tem bsr igual a {country.bsr}')
                 if country.bsr < 1.9:
                     originCountries.append(country)
+            tries_left = tries_left -1
 
 
     def supply(self, additionalTroops: int):    # objetivo é deixar a distribuicao de tropas nos territorios a mais equilibrada possivel
