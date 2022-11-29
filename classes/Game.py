@@ -22,7 +22,7 @@ class Game:
     self.window = None
     
     # criacao dos jogadores
-    self.players: list(Player) = []
+    self.players: list[Player] = []
     for p in range(NUMBER_OF_PLAYERS):
       self.players.append(Player(p, "Jogador "+  str(p+1), list(COLORS)[p], p != PLAYER_ID))
 
@@ -57,6 +57,7 @@ class Game:
     self.running = True
     self.gameStage = GAME_STAGES[0]
     self.playerRound = randint(0, NUMBER_OF_PLAYERS-1)
+    self.troopsToDeploy = 0
     
   
   def goToNextStage(self):
@@ -74,25 +75,39 @@ class Game:
   def handlePieceClick(self, pieceTerritoryId: int):
     if pieceTerritoryId == -1: #reset selected pieces
       self.gameMap.selectedTerritories = [-1, -1]
-    if self.gameMap.selectedTerritories[0] == -1:
+      return
+    if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
+      if self.players[0].color != self.territories[pieceTerritoryId].color:
+        return
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
-    elif pieceTerritoryId != self.gameMap.selectedTerritories[0]: 
+    else:
       self.gameMap.selectedTerritories[1] = pieceTerritoryId
-      if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color == self.gameMap.territories[self.gameMap.selectedTerritories[1]].color:
-        path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
-        if path == []:
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
-          self.gameMap.selectedTerritories[1] = -1
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
-        else:
-          self.gameMap.selectedTerritories = [-1, -1]
-          print(pieceTerritoryId, self.gameMap.selectedTerritories)
+    
+    if self.gameStage == "DEPLOY":
+      deployingTroops = self.troopsToDeploy
+      self.territories[pieceTerritoryId].gainTroops(deployingTroops)
+      self.troopsToDeploy -= deployingTroops
+      self.gameMap.selectedTerritories = [-1, -1]
+      return
+  
+    if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
+      losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+      if not (losses[0] == losses[1] == 0): 
+        self.gameMap.selectedTerritories = [-1, -1]
       else:
-        losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
-        if not (losses[0] == losses[1] == 0): 
-          self.gameMap.selectedTerritories = [-1, -1]
-        else:
-          self.gameMap.selectedTerritories[1] = -1
+        self.gameMap.selectedTerritories[1] = -1
+      return
+        
+    if self.gameStage == "FORTIFY" and -1 not in self.gameMap.selectedTerritories:
+      path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
+      if path == []:
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+        self.gameMap.selectedTerritories[1] = -1
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+      else:
+        self.gameMap.selectedTerritories = [-1, -1]
+        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+      return
     
 
   def onEvent(self, event):
@@ -118,7 +133,6 @@ class Game:
       if event.key == pygame.K_SPACE:
           self.goToNextStage()
         
-    # a ideia é fazer a lógica de clique dps que o overlay dos territórios estiver pronto
   def onLoop(self):
     if self.gameStage == "DRAFT":
       troopsToReceive = 0
@@ -126,7 +140,11 @@ class Game:
       troopsToReceive += self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
       troopsToReceive += self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
       print(">>", player.color, "received", troopsToReceive, "troops")
-      self.gameStage = "DEPLOY"
+      self.troopsToDeploy = troopsToReceive
+      self.goToNextStage()
+      
+    if self.gameStage == "DEPLOY" and self.troopsToDeploy <= 0:
+      self.goToNextStage()
 
   def onRender(self):
     self.window.showMap(self.graphicalMap.image)
