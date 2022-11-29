@@ -50,7 +50,7 @@ class IA(Player):     # herda da classe player
         self.main_attack(originCountries)
     
     def main_attack(self, originCountries: list[Territory]):
-        tries_left = 30
+        tries_left = 30 # pode ocorrer um territorio tem bsr menor do que o limite estabelecido, mas nao atacar pq tem menos tropas que o inimigo e ai entra num loop
         while originCountries and tries_left:
             country = originCountries.pop(0)
             targetCountries = sorted(country.getHostileTerritoryNeighbours(self.game.territories), key= lambda x: x.numberOfTroops)
@@ -60,8 +60,7 @@ class IA(Player):     # herda da classe player
                     break
                 losses = self.game.attackEnemyTerritoryBlitz(country.id, target.id)
                 print(f'IA {self.color}: {country.name} atacou {target.name}\n')
-                if losses[1] == targetTroops:
-                    originCountries.append(target)
+                if losses[1] == targetTroops:   # isso pode sair no final, se nao tiver esse print
                     print(f'IA {self.color}: {country.name} conquistou {target.name}\n')
             
             self.set_bsrs_bsts()
@@ -69,7 +68,7 @@ class IA(Player):     # herda da classe player
             originCountries = []
             for country in borderCountries:
                 print(f'{country.name} tem {country.numberOfTroops} tropas e tem bsr igual a {country.bsr}')
-                if country.bsr < 1.9:
+                if country.bsr <= 1.0 and country.numberOfTroops > 1:
                     originCountries.append(country)
             tries_left = tries_left -1
 
