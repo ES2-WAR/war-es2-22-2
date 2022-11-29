@@ -2,11 +2,12 @@ import pygame_gui
 import pygame
 
 class GameUI:
-  def __init__(self, manager: pygame_gui.UIManager):
+  def __init__(self, coordinates: tuple[int, int]):
+    self.manager = pygame_gui.UIManager(coordinates)
     self.blitzButton = pygame_gui.elements.UIButton(
       relative_rect=pygame.Rect((0, -160), (100, 50)),
       text='Blitz',
-      manager=manager,
+      manager=self.manager,
       anchors={
         'centerx': 'centerx',
         'bottom': 'bottom'
@@ -16,7 +17,7 @@ class GameUI:
     self.blitzButton.disable()
     self.selectableTroops = pygame_gui.elements.UISelectionList(
       relative_rect=pygame.Rect((0, -100), (200, 70)),
-      item_list=[], manager=manager,
+      item_list=[], manager=self.manager,
       anchors={
         'centerx': 'centerx',
         'bottom': 'bottom'
@@ -32,6 +33,7 @@ class GameUI:
 
   def setPhase(self, phase: str):    
     if phase == 'Inactive':
+      print("hiding ui")
       self.selectableTroops.remove_items(list(map(lambda x: x['text'], self.selectableTroops.item_list)))
       self.selectableTroops.hide()
       self.selectableTroops.disable()
@@ -53,3 +55,10 @@ class GameUI:
     print("selection: {}".format(selection))
     if len(selection) == 0: return None
     return int(selection[0]['text'])
+  
+  def verifyMouseCollision(self, mouseX, mouseY):
+    return self.blitzButton.hovered or self.selectableTroops.rect.collidepoint(mouseX, mouseY)
+  
+  def drawGUI(self, map: pygame.Surface):
+    self.manager.draw_ui(map)
+    

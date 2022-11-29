@@ -42,32 +42,10 @@ class Game:
     self.gameMap = GameMap(self.territories, self.regions)
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("Arial", FONT_SIZE)
-    self.manager = pygame_gui.UIManager((1200, 800))
+    # self.manager = pygame_gui.UIManager((1200, 800))
     self.clock = pygame.time.Clock()
-    # self.gameUI.blitzButton = pygame_gui.elements.UIButton(
-    #   relative_rect=pygame.Rect((0, -160), (100, 50)),
-    #   text='Blitz',
-    #   manager=self.manager,
-    #   anchors={
-    #     'centerx': 'centerx',
-    #     'bottom': 'bottom'
-    #   }
-    # )
-    self.gameUI = GameUI(self.manager)
-    self.gameUI.setPhase('Attack')
-    # self.gameUI.blitzButton.hide()
-    # self.gameUI.blitzButton.disable()
-    # self.gameUI.selectableTroops = pygame_gui.elements.UISelectionList(
-    #   relative_rect=pygame.Rect((0, -100), (200, 70)),
-    #   item_list=[], manager=self.manager,
-    #   anchors={
-    #     'centerx': 'centerx',
-    #     'bottom': 'bottom'
-    #   }
-    # )
-    # self.gameUI.selectableTroops.hide()
-    # self.gameUI.selectableTroops.disable()
-
+    self.gameUI = GameUI((1200, 800))
+    # self.gameUI.setPhase('Inactive')
     # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
     self.pieces_group = pygame.sprite.Group()
     self.selected_pieces_group = pygame.sprite.Group()
@@ -107,15 +85,22 @@ class Game:
     if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
       if self.players[0].color != self.territories[pieceTerritoryId].color:
         return
-      self.gameMap.selectedTerritories[0] = pieceTerritoryId
+      print("selected territory {}".format(self.territories[pieceTerritoryId].name))
+      self.gameMap.setSelection(pieceTerritoryId, 0)
+      # self.gameMap.selectedTerritories.pop(0)
+      # self.gameMap.selectedTerritories.insert(0, pieceTerritoryId)
     else:
       self.gameMap.selectedTerritories[1] = pieceTerritoryId
     
     if self.gameStage == "DEPLOY":
-      deployingTroops = self.troopsToDeploy
-      self.territories[pieceTerritoryId].gainTroops(deployingTroops)
-      self.troopsToDeploy -= deployingTroops
-      self.gameMap.selectedTerritories = [-1, -1]
+      print("fase é deploy")
+      # deployingTroops = self.troopsToDeploy
+      self.gameUI.setPhase("Deploy")
+      self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.troopsToDeploy))))
+      print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
+      # self.territories[pieceTerritoryId].gainTroops(deployingTroops)
+      # self.troopsToDeploy -= deployingTroops
+      # self.gameMap.selectedTerritories = [-1, -1]
       return
   
     if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
@@ -144,7 +129,18 @@ class Game:
     if event.type == pygame.QUIT:
       self.running = False
     
-    if event.type == pygame_gui.UI_BUTTON_PRESSED:
+    if event.type == pygame_gui.UI_SELECTION_LIST_NEW_SELECTION:
+      print("Lista pressionada")
+      print("Lista: {}".format(str(self.gameUI.selectableTroops.item_list)))
+      selection = self.gameUI.getSelectedOptionFromList()
+      if selection:
+        print("selected item: {}".format(selection))
+        print(self.gameMap.selectedTerritories)
+        self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
+        self.troopsToDeploy -= selection
+        self.gameMap.selectedTerritories = [-1, -1]
+        self.gameUI.setPhase("Inactive")
+    elif event.type == pygame_gui.UI_BUTTON_PRESSED:
       if not self.gameUI.blitzButton.hovered:
         print("Lista pressionada")
         print("Lista: {}".format(str(self.gameUI.selectableTroops.item_list)))
@@ -154,15 +150,16 @@ class Game:
         # self.gameUI.selectableTroops.add_items(['banana'])
         # self.gameUI.selectableTroops.remove_items(list(map(lambda x: x['text'], self.gameUI.selectableTroops.item_list)))
 
-    if event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
+    elif event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
       isPlayerTurn = self.playerRound == 0
       pieceClickedTerritorryId = -1
+      if self.gameUI.verifyMouseCollision(mousePosition[0], mousePosition[1]): return
       for piece in pieces:
         if piece.rect.collidepoint(mousePosition[0], mousePosition[1]):
           pieceClickedTerritorryId = piece.territoryId
           break
-        
+          
       # se não for round dele, invalida
       if isPlayerTurn:
         self.handlePieceClick(pieceClickedTerritorryId)
@@ -200,7 +197,8 @@ class Game:
       self.graphicalMap.image.blit(piece.frame, piece.rect)
       self.graphicalMap.image.blit(text, (piece.rect[0] + FONT_SIZE/2, piece.rect[1] + FONT_SIZE/2))
     pygame.display.flip()
-    self.manager.draw_ui(self.graphicalMap.image)
+    self.gameUI.drawGUI(self.graphicalMap.image)
+    # self.manager.draw_ui(self.graphicalMap.image)
 
   def onCleanup(self):
     pygame.quit()
@@ -213,8 +211,8 @@ class Game:
       timeDelta = self.clock.tick(60)/1000.0
       for event in pygame.event.get():
         self.onEvent(event)
-        self.manager.process_events(event)
-      self.manager.update(timeDelta)
+        self.gameUI.manager.process_events(event)
+      self.gameUI.manager.update(timeDelta)
       self.onLoop()
       self.onRender()
 

@@ -54,6 +54,12 @@ class GameMap():
     finalNumberOfDices = min(numberOfDices, MAX_OF_DICES_PER_ATTACK)
     return list(randint(1, 6) for i in range(finalNumberOfDices))
   
+  def setSelection(self, territoryId: int, position: int):
+    self.selectedTerritories[position] = territoryId
+
+  def resetSelection(self):
+    self.selectedTerritories = [-1, -1]
+
   def rollDicesForAttackerAndDefender(self, numberOfAttackerTroops: int, numberOfDefenderTroops: int) -> Tuple[list[int], list[int]]:
     attackersDiceResult = self.rollDices(numberOfAttackerTroops)
     defendersDiceResult = self.rollDices(numberOfDefenderTroops)
