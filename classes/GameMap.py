@@ -4,6 +4,9 @@ from classes.Territory import *
 from classes.Region import *
 from functools import *
 
+
+MAX_OF_DICES_PER_ATTACK = 3
+
 class GameMap():
   def __init__(self, territoryList: list[Territory], regionList: list[Region]):
     self.territories = territoryList
@@ -50,7 +53,6 @@ class GameMap():
     self.moveTroopsBetweenFriendlyTerrirories(colonyTerritoryId, self.selectedTerritories[1], numberOfTroopsOverDesired)
   
   def rollDices(self, numberOfDices: int) -> list[int]:
-    MAX_OF_DICES_PER_ATTACK = 3
     finalNumberOfDices = min(numberOfDices, MAX_OF_DICES_PER_ATTACK)
     return list(randint(1, 6) for i in range(finalNumberOfDices))
   
@@ -79,9 +81,9 @@ class GameMap():
         battlesWonByDefenders += 1
     return battlesWonByAttackers, battlesWonByDefenders
   
-  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int, numberOfAttackerTroops: int = 3) -> Tuple[int, int]:
+  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
     if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return 0, 0
-    numberOfTroopsAttacking = min(numberOfAttackerTroops, self.territories[attackerTerritoryId].getNonDefendingTroops())
+    numberOfTroopsAttacking = min(MAX_OF_DICES_PER_ATTACK, self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     diceResultOfAttackersAndDefenders = self.rollDicesForAttackerAndDefender(numberOfTroopsAttacking, numberOfDefendingTroops)
     battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(diceResultOfAttackersAndDefenders[0], diceResultOfAttackersAndDefenders[1])
@@ -98,6 +100,17 @@ class GameMap():
     while self.territories[attackerTerritoryId].canAttack() and self.territories[attackerTerritoryId].color != self.territories[defenderTerritoryId].color:
       #print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
       troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId, self.territories[attackerTerritoryId].getNonDefendingTroops())
+      totalTroopsLostByAttackerAndDefender[0] += troopsLostByAttackerAndDefender[0]
+      totalTroopsLostByAttackerAndDefender[1] += troopsLostByAttackerAndDefender[1]
+    return totalTroopsLostByAttackerAndDefender
+  
+  def attackEnemyTerritoryExhausted(self, attackerTerritoryId: int, defenderTerritoryId: int, numberOfAttackerTroops: int) -> Tuple[int, int]:
+    totalTroopsLostByAttackerAndDefender = [0, 0]
+    numberOfTroopsAttacking = min(numberOfAttackerTroops, self.territories[attackerTerritoryId].getNonDefendingTroops())
+    if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return totalTroopsLostByAttackerAndDefender
+    while self.territories[attackerTerritoryId].canAttack() and self.territories[attackerTerritoryId].color != self.territories[defenderTerritoryId].color and 0 < numberOfTroopsAttacking - totalTroopsLostByAttackerAndDefender[0]:
+      #print("attackers available: {}".format(self.territories[attackerTerritoryId].getNonDefendingTroops()))
+      troopsLostByAttackerAndDefender = self.attackEnemyTerritory(attackerTerritoryId, defenderTerritoryId, numberOfTroopsAttacking - totalTroopsLostByAttackerAndDefender[0])
       totalTroopsLostByAttackerAndDefender[0] += troopsLostByAttackerAndDefender[0]
       totalTroopsLostByAttackerAndDefender[1] += troopsLostByAttackerAndDefender[1]
     return totalTroopsLostByAttackerAndDefender
