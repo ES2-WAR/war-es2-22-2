@@ -210,7 +210,7 @@ class Game:
       text_rect = text.get_rect(center=(piece.text_center_x, piece.text_center_y))
       pieceimg = piece.image.copy()
       if piece.selected:
-        pieceimg.fill((10,10,10), special_flags=pygame.BLEND_RGB_SUB)
+        pieceimg.fill(SELECTED_COLORS[COLORS.index(piece.color)], special_flags=pygame.BLEND_RGB_SUB)
       self.graphicalMap.scaleAndBlit(pieceimg, piece.pos_x, piece.pos_y)
       self.graphicalMap.scaleAndBlit(text, text_rect.x, text_rect.y)
     pygame.display.flip()
