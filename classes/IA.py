@@ -30,7 +30,7 @@ class IA():     # herda da classe player
         return result
 
     def set_bsrs_bsts(self, gameMap: GameMap, color: str):
-        player_territories = gameMap.get_territories(color)
+        player_territories = gameMap.getAllTerritoriesOfColors(color)
         for territory in player_territories:
             territory.set_bst(gameMap.territories)
             territory.set_bsr()

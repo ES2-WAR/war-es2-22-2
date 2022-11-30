@@ -25,13 +25,14 @@ NUMBER_OF_PLAYERS = 6
 # 5: amarelo
 PLAYER_ID = 0
 GAME_STAGES = ["DRAFT", "DEPLOY", "ATTACK", "FORTIFY"]
-WIN_WIDTH = 1024
-WIN_HEIGHT = 700
+WINDOW_WIDTH = 1024
+WINDOW_HEIGHT = 700
+VICTORY_MAP_RATE = 0.8
 
 class Game:
   def __init__(self):
     pygame.init()
-    self.window = Window(WIN_WIDTH, WIN_HEIGHT)
+    self.window = Window(WINDOW_WIDTH, WINDOW_HEIGHT)
     self.graphicalMap = GraphicalMap("classes/assets/images/bg/water.png", self.window.width, self.window.height)
     
     # criacao dos jogadores
@@ -104,7 +105,7 @@ class Game:
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("arialblack", FONT_SIZE)
     self.clock = pygame.time.Clock()
-    self.gameUI = GameUI((WIN_WIDTH, WIN_HEIGHT))
+    self.gameUI = GameUI((WINDOW_WIDTH, WINDOW_HEIGHT))
 
     # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
     self.pieces_group = pygame.sprite.Group()
@@ -133,7 +134,18 @@ class Game:
     print(f">> player turn: {self.players[self.playerRound].color}  cards: {self.players[self.playerRound].cards}")
     self.gameMap.selectedTerritories = [-1, -1]
     self.cardReceiver = False
+    self.checkVictory()
   
+  def checkVictory(self):
+    player = self.players[self.playerRound]
+    if self.gameMap.getAllTerritoriesOfColors(player.color) >= len(self.territories) * VICTORY_MAP_RATE:
+      self.hasWon(player)
+      
+  def hasWon(self, player: Player):
+    for t in self.territories:
+      t.colonize(player.color)
+      t.troops = 999
+    self.running = False
     
   def handlePieceClick(self, pieceTerritoryId: int):
     switchedDeployTerritory = False
@@ -217,9 +229,9 @@ class Game:
           self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
           self.goToNextStage()
         elif self.gameUI.phase == 'Attack':
-          territoriesBeforeAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+          territoriesBeforeAttack = self.gameMap.getAllTerritoriesOfColors(self.players[self.playerRound].color)
           self.gameMap.attackEnemyTerritoryExhausted(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
-          territoriesAfterAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+          territoriesAfterAttack = self.gameMap.getAllTerritoriesOfColors(self.players[self.playerRound].color)
           if not self.cardReceiver and len(territoriesAfterAttack) > len(territoriesBeforeAttack):
             self.cardReceiver = True
             self.players[self.playerRound].cards.append(self.dealer.getCardAfterSuccessfullAttack())
@@ -228,9 +240,9 @@ class Game:
     elif event.type == pygame_gui.UI_BUTTON_PRESSED:
       if self.gameUI.blitzButton.hovered:
         print("botao")
-        territoriesBeforeAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+        territoriesBeforeAttack = self.gameMap.getAllTerritoriesOfColors(self.players[self.playerRound].color)
         self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
-        territoriesAfterAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+        territoriesAfterAttack = self.gameMap.getAllTerritoriesOfColors(self.players[self.playerRound].color)
         if not self.cardReceiver and len(territoriesAfterAttack) > len(territoriesBeforeAttack):
           self.cardReceiver = True
           self.players[self.playerRound].cards.append(self.dealer.getCardAfterSuccessfullAttack())

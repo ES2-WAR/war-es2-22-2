@@ -57,7 +57,7 @@ def test_ia_move():
 
   print('===============================')
 
-result = ia1.get_territories(testMap)
+result = ia1.getAllTerritoriesOfColors(testMap)
 print(result)
 test_ia_supply()
 test_ia_attack()

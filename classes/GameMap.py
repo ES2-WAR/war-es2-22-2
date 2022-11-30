@@ -13,7 +13,7 @@ class GameMap():
     self.regions = regionList
     self.selectedTerritories = [-1, -1]
    
-  def get_territories(self, color: str):
+  def getAllTerritoriesOfColors(self, color: str):
       return list(filter(lambda x: x.color == color, self.territories))
     
   def validateTerritoriesConnections(self) -> bool:
