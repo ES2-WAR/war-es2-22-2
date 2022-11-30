@@ -77,23 +77,36 @@ class Game:
   
     
   def handlePieceClick(self, pieceTerritoryId: int):
+    switchedDeployTerritory = False
     if pieceTerritoryId == -1: #reset selected pieces
       self.gameMap.selectedTerritories = [-1, -1]
       self.gameUI.setPhase('Inactive')
       return
-    if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
+    if self.gameMap.selectedTerritories[0] == pieceTerritoryId:
+        self.gameUI.setPhase('Inactive')
+        self.gameMap.selectedTerritories = [-1, -1]
+        return
+    if self.gameMap.selectedTerritories[0] == -1:
       if self.players[0].color != self.territories[pieceTerritoryId].color:
         return
       print("selected territory {}".format(self.territories[pieceTerritoryId].name))
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
     else:
+      if self.gameStage == 'DEPLOY':
+        self.gameMap.selectedTerritories[0] = pieceTerritoryId
+        switchedDeployTerritory = True
       self.gameMap.selectedTerritories[1] = pieceTerritoryId
     
     if self.gameStage == "DEPLOY":
+      # if self.gameMap.selectedTerritories[0] == pieceTerritoryId:
+      #   self.gameUI.setPhase('Inactive')
+      #   self.gameMap.selectedTerritories = [-1, -1]
+      #   return
       print("fase é deploy")
-      self.gameUI.setPhase("Deploy")
-      self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.troopsToDeploy))))
-      print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
+      if not switchedDeployTerritory:
+        self.gameUI.setPhase("Deploy")
+        self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.troopsToDeploy))))
+        print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
       return
   
     if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
