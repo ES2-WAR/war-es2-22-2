@@ -10,6 +10,9 @@ class GameMap():
     self.regions = regionList
     self.selectedTerritories = [-1, -1]
   
+  def validateTerritoriesConnections(self) -> bool:
+    pass
+  
   def getTerritoryNeighbours(self, index: int) -> list[int]:
     return self.territories[index].neighbours
   
