@@ -2,9 +2,12 @@ import pygame
 
 class GraphicalMap:
   def __init__(self, mapImageLocation: str, windowWidth: int, windowHeight: int):
-    unscaledMap: pygame.Surface = pygame.image.load(mapImageLocation)
-    self.image: pygame.Surface = pygame.transform.smoothscale(unscaledMap, (unscaledMap.get_width() * (windowWidth / unscaledMap.get_width()), unscaledMap.get_height() * (windowHeight / unscaledMap.get_height())))
+    self.unscaledMap: pygame.Surface = pygame.image.load(mapImageLocation)
+    self.width = windowWidth
+    self.height = windowHeight
+    self.scale = [windowWidth / self.unscaledMap.get_width(), windowHeight / self.unscaledMap.get_height()]
+    self.image: pygame.Surface = pygame.transform.smoothscale(self.unscaledMap, (self.unscaledMap.get_width() * self.scale[0], self.unscaledMap.get_height() * self.scale[1]))
 
-  def scaleToWindow(self, windowWidth: int, windowHeight: int):
-    self.image = pygame.transform.smoothscale(self.image, (self.image.get_width() * (windowWidth / self.image.get_width()), self.image.get_height() * (windowHeight / self.image.get_height())))
-  
+  def scaleAndBlit(self, surface: pygame.Surface, posX: int, posY: int):
+    scaledSurf = pygame.transform.scale(surface.convert_alpha(), (surface.get_width() * self.scale[0], surface.get_height() * self.scale[1]))
+    self.image.blit(scaledSurf, [posX, posY])
