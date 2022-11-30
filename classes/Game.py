@@ -105,11 +105,13 @@ class Game:
       return
   
     if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
-      losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
-      if not (losses[0] == losses[1] == 0): 
+      isAttackPossible = self.gameMap.isHostileNeighbour(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+      # losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+      if not isAttackPossible: 
         self.gameMap.selectedTerritories = [-1, -1]
       else:
-        self.gameMap.selectedTerritories[1] = -1
+        self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.territories[self.gameMap.selectedTerritories[0]].getNonDefendingTroops()))))
+        self.gameUI.setPhase("Attack")
       return
         
     if self.gameStage == "FORTIFY" and -1 not in self.gameMap.selectedTerritories:
@@ -149,15 +151,16 @@ class Game:
           # self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
           # self.troopsToDeploy -= selection
           self.goToNextStage()
+        elif self.gameUI.phase == 'Attack':
+          self.gameMap.attackEnemyTerritory(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
     elif event.type == pygame_gui.UI_BUTTON_PRESSED:
-      if not self.gameUI.blitzButton.hovered:
-        print("Lista pressionada")
-        print("Lista: {}".format(str(self.gameUI.selectableTroops.item_list)))
-      #botão da seleção apertado
-      else:
+      if self.gameUI.blitzButton.hovered:
         print("botao")
+        self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+        self.gameMap.selectedTerritories = [-1, -1]
+        self.gameUI.setPhase("Inactive")
         # self.gameUI.selectableTroops.add_items(['banana'])
         # self.gameUI.selectableTroops.remove_items(list(map(lambda x: x['text'], self.gameUI.selectableTroops.item_list)))
 
