@@ -39,7 +39,7 @@ class IA():     # herda da classe player
        
     def initiation_attack(self, gameMap: GameMap, color: str):
 
-        if len(self.get_territories(gameMap, color)) > 0:
+        if len(gameMap.getAllTerritoriesOfColors(color)) > 0:
             player_territories = self.set_bsrs_bsts(gameMap, color)
             borderCountries = self.set_border_countries(gameMap, color)
             originCountries = []
@@ -89,7 +89,7 @@ class IA():     # herda da classe player
 
 
     def supply(self, additionalTroops: int, gameMap: GameMap, color: str):    # objetivo é deixar a distribuicao de tropas nos territorios a mais equilibrada possivel
-        if len(self.get_territories(gameMap, color)) > 0:
+        if len(gameMap.getAllTerritoriesOfColors(color)) > 0:
             player_territories = self.set_bsrs_bsts(gameMap, color)
             border_countries = self.set_border_countries(gameMap, color)
             while additionalTroops > 0:
@@ -101,14 +101,14 @@ class IA():     # herda da classe player
                         additionalTroops = additionalTroops -1
                         # print(f'IA {self.color}: {targetCountries[0].name} recebeu 1 tropa\n')
                 else:
-                    targetCountries = sorted(self.get_territories(gameMap, color), key= lambda country: country.bsr, reverse=True)
+                    targetCountries = sorted(gameMap.getAllTerritoriesOfColors(color), key= lambda country: country.bsr, reverse=True)
                     if targetCountries[0].gainTroops(1):
                         additionalTroops = additionalTroops -1
                 
         # return player_territories     USADO PROS TESTES UNITARIOS
 
     def move(self, gameMap: GameMap, color: str):
-        if len(self.get_territories(gameMap, color)) > 0:
+        if len(gameMap.getAllTerritoriesOfColors(color)) > 0:
             player_territories = self.set_bsrs_bsts(gameMap, color)
             innerCountries =  list(filter(lambda x: x.bst == 0, player_territories))
             originCountries = list(filter(lambda country: country.numberOfTroops > 1, innerCountries))

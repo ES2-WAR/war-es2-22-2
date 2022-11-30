@@ -143,7 +143,7 @@ class Game:
     for t in self.territories:
       t.colonize(player.color)
       t.numberOfTroops = 999
-    self.running = False
+    print(f">>>> {player.color} GANHOU!")
     
   def handlePieceClick(self, pieceTerritoryId: int):
     switchedDeployTerritory = False
