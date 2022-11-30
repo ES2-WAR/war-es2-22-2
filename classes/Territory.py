@@ -4,7 +4,7 @@ class Territory():
   def __init__(self, neighbours: list[int], regionId: int, territoryName: str, territoryId: int, pos_x: int, pos_y: int, text_center_x: int, text_center_y: int):
     self.id = territoryId
     self.neighbours = neighbours
-    self.numberOfTroops = 15
+    self.numberOfTroops = 4
     self.regionId = regionId
     self.name = territoryName
     # self.color = color            # RETIRAR DEPOIS DO TESTEEEEEEEE
