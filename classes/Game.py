@@ -10,6 +10,7 @@ from classes.GameMap import *
 from classes.Dealer import *
 from classes.Player import *
 from classes.GameUI import *
+from classes.IA import *
 import pygame_gui
 
 
