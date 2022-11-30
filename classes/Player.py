@@ -5,9 +5,9 @@ class Player():
     self.name = playerName
     self.isAI = isAI
     
-  def get_territories(self):
+  def get_territories(self, game):
       player_territories = []
-      for territory in self.game.territories:
+      for territory in game.territories:
           if territory.color == self.color:
               player_territories.append(territory)
       return player_territories
