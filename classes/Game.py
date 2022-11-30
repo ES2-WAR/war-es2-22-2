@@ -65,7 +65,7 @@ class Game:
       Territory([26,28,30,31,33],4,'Dudinka',27,692,37,758,132),
       Territory([27,30,29],4,'Siberia',28,783,53,830,95),
       Territory([0,28,30,31,34],4,'Vladvostok',29,837,67,887,122),
-      Territory([28,27,31,33,29],4,'Tchita',30,769,129,819,181),
+      Territory([27,31,33,29],4,'Tchita',30,769,129,819,181),
       Territory([27,29,30,33,34],4,'Mongolia',31,775,186,830,242),
       Territory([26,15,35,36,33],4,'Aral',32,628,202,687,258),
       Territory([26,27,31,32,34,36,37],4,'China',33,722,222,807,305),
@@ -88,6 +88,11 @@ class Game:
         self.territories[territoryInd].colonize(ownerColor)
         self.piecesColors[territoryInd] = ownerColor
     self.gameMap = GameMap(self.territories, self.regions)
+    validTerritories = self.gameMap.validateTerritoriesConnections()
+    if validTerritories:
+      print(">> Territories loaded!")
+    else:
+      print(">> Bad territories logic!")
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("arialblack", FONT_SIZE)
 

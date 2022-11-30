@@ -11,7 +11,12 @@ class GameMap():
     self.selectedTerritories = [-1, -1]
   
   def validateTerritoriesConnections(self) -> bool:
-    pass
+    result = True
+    for ind, territory in enumerate(self.territories):
+      result = result and all(ind in self.territories[neighInd].neighbours for neighInd in territory.neighbours)
+      if not result:
+        print("Territory id error:", ind)
+    return result
   
   def getTerritoryNeighbours(self, index: int) -> list[int]:
     return self.territories[index].neighbours

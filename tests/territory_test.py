@@ -25,6 +25,7 @@ player0 = Player(0, "Jogador 0", '0', True)
 player1 = Player(1, "Jogador 1", '1', True)
 
 def test_neighbourhoods():
+  assert testMap.validateTerritoriesConnections()
   assert testMap.getFriendlyTerritoryNeighbours(3) == [2, 5]
   assert testMap.getHostileTerritoryNeighbours(0) == [2]
   assert testMap.getHostileTerritoryNeighbours(5) == []
