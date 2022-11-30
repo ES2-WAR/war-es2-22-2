@@ -5,7 +5,7 @@ class GameUI:
   def __init__(self, coordinates: tuple[int, int]):
     self.manager = pygame_gui.UIManager(coordinates)
     self.blitzButton = pygame_gui.elements.UIButton(
-      relative_rect=pygame.Rect((-350, -100), (100, 50)),
+      relative_rect=pygame.Rect((-340, -100), (100, 50)),
       text='Blitz',
       manager=self.manager,
       anchors={
@@ -16,7 +16,7 @@ class GameUI:
     # self.blitzButton.hide()
     self.blitzButton.disable()
     self.selectableTroops = pygame_gui.elements.UISelectionList(
-      relative_rect=pygame.Rect((350, -100), (200, 70)),
+      relative_rect=pygame.Rect((308, -100), (200, 70)),
       item_list=[], manager=self.manager,
       anchors={
         'left': 'left',
