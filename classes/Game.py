@@ -118,6 +118,7 @@ class Game:
     self.gameStage = GAME_STAGES[0]
     self.playerRound = randint(0, NUMBER_OF_PLAYERS-1)
     self.troopsToDeploy = 0
+    self.cardReceiver = False
     
   
   def goToNextStage(self):
@@ -131,6 +132,7 @@ class Game:
     self.playerRound = (self.playerRound + 1) % NUMBER_OF_PLAYERS
     print(">> player turn:", self.players[self.playerRound].color)
     self.gameMap.selectedTerritories = [-1, -1]
+    self.cardReceiver = False
   
     
   def handlePieceClick(self, pieceTerritoryId: int):
@@ -215,13 +217,23 @@ class Game:
           self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
           self.goToNextStage()
         elif self.gameUI.phase == 'Attack':
+          territoriesBeforeAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
           self.gameMap.attackEnemyTerritoryExhausted(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
+          territoriesAfterAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+          if not self.cardReceiver and len(territoriesAfterAttack) > len(territoriesBeforeAttack):
+            self.cardReceiver = True
+            self.players[self.playerRound].cards.append(self.dealer.getCardAfterSuccessfullAttack())
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
     elif event.type == pygame_gui.UI_BUTTON_PRESSED:
       if self.gameUI.blitzButton.hovered:
         print("botao")
+        territoriesBeforeAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
         self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+        territoriesAfterAttack = self.gameMap.get_territories(self.players[self.playerRound].color)
+        if not self.cardReceiver and len(territoriesAfterAttack) > len(territoriesBeforeAttack):
+          self.cardReceiver = True
+          self.players[self.playerRound].cards.append(self.dealer.getCardAfterSuccessfullAttack())
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
     elif event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
@@ -252,6 +264,7 @@ class Game:
       troopsToReceive = 0
       troopsToReceive += self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
       troopsToReceive += self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
+      troopsToReceive += self.dealer.receiveArmyFromTradingCards(player.cards, True)
       print(">>", player.color, "received", troopsToReceive, "troops")
       self.troopsToDeploy = troopsToReceive
       self.goToNextStage()
