@@ -42,10 +42,8 @@ class Game:
     self.gameMap = GameMap(self.territories, self.regions)
     # criacao da fonte para o texto da quantidade de tropas
     self.font = pygame.font.SysFont("Arial", FONT_SIZE)
-    # self.manager = pygame_gui.UIManager((1200, 800))
     self.clock = pygame.time.Clock()
     self.gameUI = GameUI((1200, 800))
-    # self.gameUI.setPhase('Inactive')
     # criacao do grupo de sprites e populando ele com novas peças baseadas nos territorios da territoryList
     self.pieces_group = pygame.sprite.Group()
     self.selected_pieces_group = pygame.sprite.Group()
@@ -88,25 +86,18 @@ class Game:
         return
       print("selected territory {}".format(self.territories[pieceTerritoryId].name))
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
-      # self.gameMap.selectedTerritories.pop(0)
-      # self.gameMap.selectedTerritories.insert(0, pieceTerritoryId)
     else:
       self.gameMap.selectedTerritories[1] = pieceTerritoryId
     
     if self.gameStage == "DEPLOY":
       print("fase é deploy")
-      # deployingTroops = self.troopsToDeploy
       self.gameUI.setPhase("Deploy")
       self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.troopsToDeploy))))
       print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
-      # self.territories[pieceTerritoryId].gainTroops(deployingTroops)
-      # self.troopsToDeploy -= deployingTroops
-      # self.gameMap.selectedTerritories = [-1, -1]
       return
   
     if self.gameStage == "ATTACK" and -1 not in self.gameMap.selectedTerritories:
       isAttackPossible = self.gameMap.isHostileNeighbour(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
-      # losses = self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
       if not isAttackPossible: 
         self.gameMap.selectedTerritories = [-1, -1]
       else:
@@ -121,9 +112,6 @@ class Game:
         self.gameUI.setPhase("Move")
         self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.territories[self.gameMap.selectedTerritories[0]].getNonDefendingTroops()))))
         print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
-        # print(pieceTerritoryId, self.gameMap.selectedTerritories)
-        # self.gameMap.selectedTerritories[1] = -1
-        # print(pieceTerritoryId, self.gameMap.selectedTerritories)
       else:
         self.gameMap.selectedTerritories = [-1, -1]
         print(pieceTerritoryId, self.gameMap.selectedTerritories)
@@ -148,8 +136,6 @@ class Game:
           self.troopsToDeploy -= selection
         elif self.gameUI.phase == 'Move':
           self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
-          # self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
-          # self.troopsToDeploy -= selection
           self.goToNextStage()
         elif self.gameUI.phase == 'Attack':
           self.gameMap.attackEnemyTerritory(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
@@ -161,9 +147,6 @@ class Game:
         self.gameMap.attackEnemyTerritoryBlitz(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
-        # self.gameUI.selectableTroops.add_items(['banana'])
-        # self.gameUI.selectableTroops.remove_items(list(map(lambda x: x['text'], self.gameUI.selectableTroops.item_list)))
-
     elif event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
       isPlayerTurn = self.playerRound == 0
