@@ -16,8 +16,9 @@ class GameMap():
   def validateTerritoriesConnections(self) -> bool:
     result = True
     for ind, territory in enumerate(self.territories):
-      result = result and all(ind in self.territories[neighInd].neighbours for neighInd in territory.neighbours)
-      if not result:
+      isCorrect = all(ind in self.territories[neighInd].neighbours for neighInd in territory.neighbours)
+      result = result and isCorrect
+      if not isCorrect:
         print("Territory id error:", ind)
     return result
   
@@ -46,10 +47,11 @@ class GameMap():
         return True, possiblePath[1]
     return False, []
   
-  def moveTroopsBetweenFriendlyTerrirories(self, fromTerritoryId: int, toTerritoryId: int, numberOfTroops: int):
-    # possiblePathToDestiny = self.canMoveTroopsBetweenFriendlyTerriroriesAux(fromTerritoryId, toTerritoryId, [], [])
-    # if not possiblePathToDestiny[1]:
-    #   return []
+  def moveTroopsBetweenFriendlyTerrirories(self, fromTerritoryId: int, toTerritoryId: int, numberOfTroops: int, forAI: bool = False):
+    if forAI:
+      possiblePathToDestiny = self.canMoveTroopsBetweenFriendlyTerriroriesAux(fromTerritoryId, toTerritoryId, [], [])
+      if not possiblePathToDestiny[1]:
+        return []
     troopsLost = self.territories[fromTerritoryId].deallocateTroops(numberOfTroops)
     self.territories[toTerritoryId].gainTroops(troopsLost)
     # return possiblePathToDestiny[1]
@@ -59,8 +61,6 @@ class GameMap():
     if not possiblePath[1]: return False
     return True
   
-  
-
   def moveDifferentNumberOfTroopsToColonyAfterAttack(self, colonyTerritoryId: int, newNumberOfTroopsInColony: int):
     if self.selectedTerritories[0] != colonyTerritoryId:
       return
