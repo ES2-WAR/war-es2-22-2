@@ -4,8 +4,6 @@ from classes.Territory import *
 
 COLORS = ["bran", "verm", "verd", "azul", "pret", "amar"]
 
-
-
 class Piece(pygame.sprite.Sprite):
   def __init__(self, territoryId: int, territoryName: str, territoryColor: str, troops: int, pos_x: int, pos_y: int, text_center_x: int, text_center_y: int):
     super().__init__()
