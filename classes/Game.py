@@ -158,7 +158,7 @@ class Game:
           self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
           self.goToNextStage()
         elif self.gameUI.phase == 'Attack':
-          self.gameMap.attackEnemyTerritory(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
+          self.gameMap.attackEnemyTerritoryExhausted(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
     elif event.type == pygame_gui.UI_BUTTON_PRESSED:

@@ -94,9 +94,9 @@ class GameMap():
         battlesWonByDefenders += 1
     return battlesWonByAttackers, battlesWonByDefenders
   
-  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int) -> Tuple[int, int]:
+  def attackEnemyTerritory(self, attackerTerritoryId: int, defenderTerritoryId: int, numberOfTroops) -> Tuple[int, int]:
     if not self.isHostileNeighbour(attackerTerritoryId, defenderTerritoryId): return 0, 0
-    numberOfTroopsAttacking = min(MAX_OF_DICES_PER_ATTACK, self.territories[attackerTerritoryId].getNonDefendingTroops())
+    numberOfTroopsAttacking = min(min(numberOfTroops, MAX_OF_DICES_PER_ATTACK), self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     diceResultOfAttackersAndDefenders = self.rollDicesForAttackerAndDefender(numberOfTroopsAttacking, numberOfDefendingTroops)
     battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(diceResultOfAttackersAndDefenders[0], diceResultOfAttackersAndDefenders[1])
