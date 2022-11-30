@@ -35,14 +35,21 @@ class GameMap():
         return True, possiblePath[1]
     return False, []
   
-  def moveTroopsBetweenFriendlyTerrirories(self, fromTerritoryId: int, toTerritoryId: int, numberOfTroops: int) -> list[int]:
-    possiblePathToDestiny = self.canMoveTroopsBetweenFriendlyTerriroriesAux(fromTerritoryId, toTerritoryId, [], [])
-    if not possiblePathToDestiny[1]:
-      return []
+  def moveTroopsBetweenFriendlyTerrirories(self, fromTerritoryId: int, toTerritoryId: int, numberOfTroops: int):
+    # possiblePathToDestiny = self.canMoveTroopsBetweenFriendlyTerriroriesAux(fromTerritoryId, toTerritoryId, [], [])
+    # if not possiblePathToDestiny[1]:
+    #   return []
     troopsLost = self.territories[fromTerritoryId].deallocateTroops(numberOfTroops)
     self.territories[toTerritoryId].gainTroops(troopsLost)
-    return possiblePathToDestiny[1]
+    # return possiblePathToDestiny[1]
   
+  def canMoveTroopsBetweenFriendlyTerritories(self, fromTerritoryId: int, toTerritoryId: int):
+    possiblePath = self.canMoveTroopsBetweenFriendlyTerriroriesAux(fromTerritoryId, toTerritoryId, [], [])
+    if not possiblePath[1]: return False
+    return True
+  
+  
+
   def moveDifferentNumberOfTroopsToColonyAfterAttack(self, colonyTerritoryId: int, newNumberOfTroopsInColony: int):
     if self.selectedTerritories[0] != colonyTerritoryId:
       return

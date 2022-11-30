@@ -81,12 +81,13 @@ class Game:
   def handlePieceClick(self, pieceTerritoryId: int):
     if pieceTerritoryId == -1: #reset selected pieces
       self.gameMap.selectedTerritories = [-1, -1]
+      self.gameUI.setPhase('Inactive')
       return
     if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
       if self.players[0].color != self.territories[pieceTerritoryId].color:
         return
       print("selected territory {}".format(self.territories[pieceTerritoryId].name))
-      self.gameMap.setSelection(pieceTerritoryId, 0)
+      self.gameMap.selectedTerritories[0] = pieceTerritoryId
       # self.gameMap.selectedTerritories.pop(0)
       # self.gameMap.selectedTerritories.insert(0, pieceTerritoryId)
     else:
@@ -112,11 +113,15 @@ class Game:
       return
         
     if self.gameStage == "FORTIFY" and -1 not in self.gameMap.selectedTerritories:
-      path: list[int] = self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], 10)
-      if path == []:
-        print(pieceTerritoryId, self.gameMap.selectedTerritories)
-        self.gameMap.selectedTerritories[1] = -1
-        print(pieceTerritoryId, self.gameMap.selectedTerritories)
+
+      isMovePossible = self.gameMap.canMoveTroopsBetweenFriendlyTerritories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1])
+      if isMovePossible:
+        self.gameUI.setPhase("Move")
+        self.gameUI.addItemsToSelectableTroops(list(map(lambda x: str(x+1), range(self.territories[self.gameMap.selectedTerritories[0]].getNonDefendingTroops()))))
+        print("selecao de territorios: {}".format(self.gameMap.selectedTerritories))
+        # print(pieceTerritoryId, self.gameMap.selectedTerritories)
+        # self.gameMap.selectedTerritories[1] = -1
+        # print(pieceTerritoryId, self.gameMap.selectedTerritories)
       else:
         self.gameMap.selectedTerritories = [-1, -1]
         print(pieceTerritoryId, self.gameMap.selectedTerritories)
@@ -136,8 +141,14 @@ class Game:
       if selection:
         print("selected item: {}".format(selection))
         print(self.gameMap.selectedTerritories)
-        self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
-        self.troopsToDeploy -= selection
+        if self.gameUI.phase == 'Deploy':
+          self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
+          self.troopsToDeploy -= selection
+        elif self.gameUI.phase == 'Move':
+          self.gameMap.moveTroopsBetweenFriendlyTerrirories(self.gameMap.selectedTerritories[0], self.gameMap.selectedTerritories[1], selection)
+          # self.territories[self.gameMap.selectedTerritories[0]].gainTroops(selection)
+          # self.troopsToDeploy -= selection
+          self.goToNextStage()
         self.gameMap.selectedTerritories = [-1, -1]
         self.gameUI.setPhase("Inactive")
     elif event.type == pygame_gui.UI_BUTTON_PRESSED:
