@@ -13,6 +13,14 @@ class GameMap():
     self.regions = regionList
     self.selectedTerritories = [-1, -1]
   
+  def validateTerritoriesConnections(self) -> bool:
+    result = True
+    for ind, territory in enumerate(self.territories):
+      result = result and all(ind in self.territories[neighInd].neighbours for neighInd in territory.neighbours)
+      if not result:
+        print("Territory id error:", ind)
+    return result
+  
   def getTerritoryNeighbours(self, index: int) -> list[int]:
     return self.territories[index].neighbours
   
@@ -99,6 +107,7 @@ class GameMap():
     numberOfTroopsAttacking = min(min(numberOfTroops, MAX_OF_DICES_PER_ATTACK), self.territories[attackerTerritoryId].getNonDefendingTroops())
     numberOfDefendingTroops = self.territories[defenderTerritoryId].getDefendingTroops()
     diceResultOfAttackersAndDefenders = self.rollDicesForAttackerAndDefender(numberOfTroopsAttacking, numberOfDefendingTroops)
+    print("dices (atk  def):", diceResultOfAttackersAndDefenders)
     battlesWonByAttackersAndDefenders = self.getSuccessfullAttacks(diceResultOfAttackersAndDefenders[0], diceResultOfAttackersAndDefenders[1])
     troopsLostByAttacker = self.territories[attackerTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[1])
     troopsLostByDefender = self.territories[defenderTerritoryId].loseTroops(battlesWonByAttackersAndDefenders[0])
