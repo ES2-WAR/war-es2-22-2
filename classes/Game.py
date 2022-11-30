@@ -10,6 +10,7 @@ from classes.GameMap import *
 from classes.Dealer import *
 from classes.Player import *
 from classes.GameUI import *
+from classes.IA import *
 import pygame_gui
 
 
@@ -70,16 +71,16 @@ class Game:
       Territory([26,28,30,31,33],4,'Dudinka',27,692,37,758,132),
       Territory([27,30,29],4,'Siberia',28,783,53,830,95),
       Territory([0,28,30,31,34],4,'Vladvostok',29,837,67,887,122),
-      Territory([27,31,33,29],4,'Tchita',30,769,129,819,181),
+      Territory([27,28,31,29],4,'Tchita',30,769,129,819,181),
       Territory([27,29,30,33,34],4,'Mongolia',31,775,186,830,242),
       Territory([26,15,35,36,33],4,'Aral',32,628,202,687,258),
-      Territory([26,27,31,32,34,36,37],4,'China',33,722,222,807,305),
+      Territory([26,27,31,32,36,37],4,'China',33,722,222,807,305),
       Territory([29,31],4,'Japao',34,895,190,937,254),
       Territory([15,19,21,22,36,32],4,'OrienteMedio',35,550,302,628,366),
       Territory([32,35,33,37],4,'India',36,688,292,744,361),
       Territory([33,36,38],4,'Vietna',37,786,344,823,388),
-      Territory([37,41],5,'Sumatra',38,782,454,840,498),
-      Territory([37,40],5,'NovaGuine',39,881,444,930,473),
+      Territory([37,39,41],5,'Sumatra',38,782,454,840,498),
+      Territory([38,40],5,'NovaGuine',39,881,444,930,473),
       Territory([39,41],5,'NovaZelandia',40,907,514,962,568),
       Territory([38,40],5,'Australia',41,840,530,881,595)]
     self.piecesColors = ["" for i in range(len(self.territories))]
@@ -93,6 +94,8 @@ class Game:
         self.territories[territoryInd].colonize(ownerColor)
         self.piecesColors[territoryInd] = ownerColor
     self.gameMap = GameMap(self.territories, self.regions)
+    self.ia = IA()
+    self.iaIsRunning = False
     validTerritories = self.gameMap.validateTerritoriesConnections()
     if validTerritories:
       print(">> Territories loaded!")
@@ -244,9 +247,9 @@ class Game:
           self.goToNextStage()
         
   def onLoop(self):
+    player = self.players[self.playerRound]
     if self.gameStage == "DRAFT":
       troopsToReceive = 0
-      player = self.players[self.playerRound]
       troopsToReceive += self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
       troopsToReceive += self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
       print(">>", player.color, "received", troopsToReceive, "troops")
@@ -254,6 +257,17 @@ class Game:
       self.goToNextStage()
       
     if self.gameStage == "DEPLOY" and self.troopsToDeploy <= 0:
+      self.goToNextStage()
+      
+    if player.isAI and not self.iaIsRunning:
+      self.iaIsRunning = True
+      if self.gameStage == "DEPLOY":
+        self.ia.supply(self.troopsToDeploy, self.gameMap, player.color)
+      elif self.gameStage == "ATTACK":
+        self.ia.initiation_attack(self.gameMap, player.color)
+      elif self.gameStage == "FORTIFY":
+        self.ia.move(self.gameMap, player.color)
+      self.iaIsRunning = False
       self.goToNextStage()
 
   def onRender(self):

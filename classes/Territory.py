@@ -7,8 +7,11 @@ class Territory():
     self.numberOfTroops = 15
     self.regionId = regionId
     self.name = territoryName
+    # self.color = color            # RETIRAR DEPOIS DO TESTEEEEEEEE
     self.pos_x = pos_x
     self.pos_y = pos_y
+    self.bst = 0      # border security threat -> quantidade de tropas inimigas em volta do territorio
+    self.bsr = 0      # border security ratio  -> bst / quantidade de tropas no territorio
     self.text_x = text_center_x
     self.text_y = text_center_y
     
@@ -43,4 +46,30 @@ class Territory():
     
   def deallocateTroops(self, troops: int) -> int:
     return self.loseTroops(min(self.getNonDefendingTroops(), troops))
+
+
+  # precisava usar essa funcao e nao dava pra importar de GammeMap
+  # nao sei se vai dar tempo de fazer uma outra classe soh com funcoes auxiliares
+  def getHostileTerritoryNeighbours(self, territories):
+    hostiles = []
+    neighbours_obj = []
+    for territory in territories:
+      if territory.id in self.neighbours:
+        neighbours_obj.append(territory)
+      
+    for neighbour in neighbours_obj:
+      if neighbour.color != self.color:
+        hostiles.append(neighbour)
+
+    return hostiles
+
+  def set_bst(self, territories):
+        self.bst = 0
+        hostile_neighbours = self.getHostileTerritoryNeighbours(territories)
+        for hostile in hostile_neighbours:
+            self.bst = self.bst + hostile.getDefendingTroops()
+    
+  def set_bsr(self):
+      self.bsr = 0
+      self.bsr = self.bst / self.getDefendingTroops()
     

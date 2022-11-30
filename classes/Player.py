@@ -4,4 +4,3 @@ class Player():
     self.color = color
     self.name = playerName
     self.isAI = isAI
-    
