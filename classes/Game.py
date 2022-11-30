@@ -13,6 +13,12 @@ from classes.Player import *
 pygame.init()
 FONT_SIZE = 12
 NUMBER_OF_PLAYERS = 6
+# 0: branco
+# 1: vermelho
+# 2: verde
+# 3: azul
+# 4: preto
+# 5: amarelo
 PLAYER_ID = 0
 GAME_STAGES = ["DRAFT", "DEPLOY", "ATTACK", "FORTIFY"]
 
@@ -116,7 +122,7 @@ class Game:
       self.gameMap.selectedTerritories = [-1, -1]
       return
     if self.gameMap.selectedTerritories[0] == -1 or pieceTerritoryId == self.gameMap.selectedTerritories[0]:
-      if self.players[0].color != self.territories[pieceTerritoryId].color:
+      if self.players[PLAYER_ID].color != self.territories[pieceTerritoryId].color:
         return
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
     else:
@@ -158,7 +164,7 @@ class Game:
     
     if event.type == pygame.MOUSEBUTTONDOWN: # botão é apertado
       print("mouse coordinates (x, y): {}, {}".format(mousePosition[0], mousePosition[1]))
-      isPlayerTurn = self.playerRound == 0
+      isPlayerTurn = self.playerRound == PLAYER_ID
       pieceClickedTerritorryId = -1
       for piece in pieces:
         if piece.rect.collidepoint(mousePosition[0], mousePosition[1]) and piece.mask.get_at((mousePosition[0] - piece.rect.x, mousePosition[1] - piece.rect.y)):
@@ -202,7 +208,10 @@ class Game:
       piece.updatePiece(self.gameMap.territories[piece.territoryId])
       text = self.font.render(str(piece.troops), True, (150,150,150))
       text_rect = text.get_rect(center=(piece.text_center_x, piece.text_center_y))
-      self.graphicalMap.scaleAndBlit(piece.image, piece.pos_x, piece.pos_y)
+      pieceimg = piece.image.copy()
+      if piece.selected:
+        pieceimg.fill((10,10,10), special_flags=pygame.BLEND_RGB_SUB)
+      self.graphicalMap.scaleAndBlit(pieceimg, piece.pos_x, piece.pos_y)
       self.graphicalMap.scaleAndBlit(text, text_rect.x, text_rect.y)
     pygame.display.flip()
 
