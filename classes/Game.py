@@ -115,6 +115,7 @@ class Game:
   def goToNextPlayerRound(self):
     self.playerRound = (self.playerRound + 1) % NUMBER_OF_PLAYERS
     print(">> player turn:", self.players[self.playerRound].color)
+    self.gameMap.selectedTerritories = [-1, -1]
   
     
   def handlePieceClick(self, pieceTerritoryId: int):
@@ -168,7 +169,7 @@ class Game:
       pieceClickedTerritorryId = -1
       for piece in pieces:
         if piece.rect.collidepoint(mousePosition[0], mousePosition[1]) and piece.mask.get_at((mousePosition[0] - piece.rect.x, mousePosition[1] - piece.rect.y)):
-          print(">> clicked on", piece.color, "piece")
+          print(">> clicked on", self.territories[piece.territoryId].color, "piece")
           pieceClickedTerritorryId = piece.territoryId
           break
         
@@ -203,8 +204,9 @@ class Game:
       piece.selected = False
       if piece.territoryId in self.gameMap.selectedTerritories:
         piece.selected = True
-      if self.piecesColors == piece.color and wasSelected == piece.selected:
+      if self.piecesColors == self.territories[piece.territoryId].color and wasSelected == piece.selected:
         continue
+      self.piecesColors[piece.territoryId] = piece.color = self.territories[piece.territoryId].color
       piece.updatePiece(self.gameMap.territories[piece.territoryId])
       text = self.font.render(str(piece.troops), True, (150,150,150))
       text_rect = text.get_rect(center=(piece.text_center_x, piece.text_center_y))
