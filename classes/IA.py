@@ -6,14 +6,6 @@ from classes.Dealer import *
 
 
 class IA():     # herda da classe player
-        
-    def get_territories(self, gameMap: GameMap, color: str):
-        player_territories = []
-        for territory in gameMap.territories:
-            if territory.color == color:
-                player_territories.append(territory)
-        return player_territories
-  
   
     def set_border_countries(self, gameMap: GameMap, color: str):
         player_territories = self.set_bsrs_bsts(gameMap, color)
@@ -38,7 +30,7 @@ class IA():     # herda da classe player
         return result
 
     def set_bsrs_bsts(self, gameMap: GameMap, color: str):
-        player_territories = self.get_territories(gameMap, color)
+        player_territories = gameMap.get_territories(color)
         for territory in player_territories:
             territory.set_bst(gameMap.territories)
             territory.set_bsr()

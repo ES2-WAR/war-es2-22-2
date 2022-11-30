@@ -12,7 +12,10 @@ class GameMap():
     self.territories = territoryList
     self.regions = regionList
     self.selectedTerritories = [-1, -1]
-  
+   
+  def get_territories(self, color: str):
+      return list(filter(lambda x: x.color == color, self.territories))
+    
   def validateTerritoriesConnections(self) -> bool:
     result = True
     for ind, territory in enumerate(self.territories):
