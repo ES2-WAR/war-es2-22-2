@@ -123,14 +123,14 @@ class Game:
   
   def goToNextStage(self):
     self.gameStage = GAME_STAGES[(GAME_STAGES.index(self.gameStage) + 1) % len(GAME_STAGES)]
-    print(">> new stage is", self.gameStage)
+    print("\t>> new stage is", self.gameStage)
     if GAME_STAGES.index(self.gameStage) == 0:
       self.goToNextPlayerRound()
     
     
   def goToNextPlayerRound(self):
     self.playerRound = (self.playerRound + 1) % NUMBER_OF_PLAYERS
-    print(">> player turn:", self.players[self.playerRound].color)
+    print(f">> player turn: {self.players[self.playerRound].color}  cards: {self.players[self.playerRound].cards}")
     self.gameMap.selectedTerritories = [-1, -1]
     self.cardReceiver = False
   
@@ -261,11 +261,11 @@ class Game:
   def onLoop(self):
     player = self.players[self.playerRound]
     if self.gameStage == "DRAFT":
-      troopsToReceive = 0
-      troopsToReceive += self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
-      troopsToReceive += self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
-      troopsToReceive += self.dealer.receiveArmyFromTradingCards(player.cards, True)
-      print(">>", player.color, "received", troopsToReceive, "troops")
+      territoryTroops = self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
+      regionTroops = self.dealer.receiveArmyFromPossessedRegions(player, self.territories)
+      cardTroops = self.dealer.receiveArmyFromTradingCards(player.cards, True)
+      troopsToReceive = territoryTroops + regionTroops + cardTroops
+      print(f">> {player.color} received {troopsToReceive} troops ({territoryTroops}:territories  {regionTroops}:region  {cardTroops}:cards)")
       self.troopsToDeploy = troopsToReceive
       self.goToNextStage()
       
