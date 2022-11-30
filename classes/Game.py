@@ -92,10 +92,17 @@ class Game:
       print("selected territory {}".format(self.territories[pieceTerritoryId].name))
       self.gameMap.selectedTerritories[0] = pieceTerritoryId
     else:
-      if self.gameStage == 'DEPLOY':
-        self.gameMap.selectedTerritories[0] = pieceTerritoryId
-        switchedDeployTerritory = True
-      self.gameMap.selectedTerritories[1] = pieceTerritoryId
+      if self.gameStage == 'DEPLOY': 
+        if self.gameMap.territories[self.gameMap.selectedTerritories[0]].color == self.gameMap.territories[pieceTerritoryId].color:
+          print("color is the same")
+          self.gameMap.selectedTerritories[0] = pieceTerritoryId
+          switchedDeployTerritory = True
+        else: 
+          print('different color')
+          self.gameUI.setPhase('Inactive')
+          self.gameMap.selectedTerritories = [-1, -1]
+          return
+      else: self.gameMap.selectedTerritories[1] = pieceTerritoryId
     
     if self.gameStage == "DEPLOY":
       # if self.gameMap.selectedTerritories[0] == pieceTerritoryId:
