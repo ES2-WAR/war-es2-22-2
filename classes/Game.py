@@ -128,23 +128,21 @@ class Game:
     if GAME_STAGES.index(self.gameStage) == 0:
       self.goToNextPlayerRound()
     
-    
   def goToNextPlayerRound(self):
     self.playerRound = (self.playerRound + 1) % NUMBER_OF_PLAYERS
     print(f">> player turn: {self.players[self.playerRound].color}  cards: {self.players[self.playerRound].cards}")
     self.gameMap.selectedTerritories = [-1, -1]
     self.cardReceiver = False
-    self.checkVictory()
   
   def checkVictory(self):
     player = self.players[self.playerRound]
-    if self.gameMap.getAllTerritoriesOfColors(player.color) >= len(self.territories) * VICTORY_MAP_RATE:
+    if len(self.gameMap.getAllTerritoriesOfColors(player.color)) >= len(self.territories) * VICTORY_MAP_RATE:
       self.hasWon(player)
       
   def hasWon(self, player: Player):
     for t in self.territories:
       t.colonize(player.color)
-      t.troops = 999
+      t.numberOfTroops = 999
     self.running = False
     
   def handlePieceClick(self, pieceTerritoryId: int):
@@ -272,6 +270,7 @@ class Game:
         
   def onLoop(self):
     player = self.players[self.playerRound]
+    self.checkVictory()
     if self.gameStage == "DRAFT":
       territoryTroops = self.dealer.receiveArmyFromPossessedTerritories(player, self.territories)
       regionTroops = self.dealer.receiveArmyFromPossessedRegions(player, self.territories)

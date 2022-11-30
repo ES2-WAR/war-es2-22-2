@@ -29,6 +29,8 @@ class Territory():
   
   def colonize(self, colonizerColor: str):
     self.color = colonizerColor
+    if self.color == "bran":
+      self.numberOfTroops = 25
   
   def gainTroops(self, troops: int) -> bool:
     if troops <= 0:
