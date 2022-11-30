@@ -48,9 +48,10 @@ python classes/Game.py
 
 * [Slides AP1](https://docs.google.com/presentation/d/1qFW--yI3nPFE5_KXwz0WO52rEL3GsVqu6Xc1tL2T6ew/edit#slide=id.p) - Primeira apresentação
 * [Slides AP1.1](https://docs.google.com/presentation/d/1HF5WxkJfYrJB20csV_6rUuf5I7dLtZpl0Z3LYi5BCio/edit#slide=id.g18a8cd3cb20_0_93) - Complemento da primeira apresentação
+* [Video AP1.1](https://drive.google.com/file/d/1jN3dhaPZTFvnXCseX8d-BkFI0SiKVAHI/view) - Complemento da primeira apresentação
 * [Slides AP2](https://docs.google.com/presentation/d/13N2OW3jWLvBFyXGxjNsDbfbLp5d29Dq8kKvnIdkAXOY/edit#slide=id.g1880f886418_0_48) - Segunda apresentação
-* [Video AP2]() - Segunda apresentação
-* [GitHub Projects]() - Monitoramento e controle do projeto
+* [Video AP2](https://drive.google.com/file/d/1g0Sz3m2ThsmGilhMAadOD9JMJt12uqnK/view) - Segunda apresentação
+* [GitHub Projects](https://github.com/orgs/ES2-WAR/projects/1/views/1) - Monitoramento e controle do projeto
 
 
 ## Autores
